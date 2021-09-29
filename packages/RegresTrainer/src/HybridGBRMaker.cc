@@ -38,7 +38,7 @@
 #include "GBRLikelihood/RooHybridBDTAutoPdf.h"
 #include "GBRLikelihood/RooDoubleCBFast.h"
 #include "GBRLikelihood/HybridGBRForestFlex.h"
-#include "CondFormats/EgammaObjects/interface/GBRForestD.h"
+#include "CondFormats/GBRForest/interface/GBRForestD.h"
 
 #include <iostream>
 #include <sstream>
@@ -321,7 +321,8 @@ void HybridGBRMaker::runEB(const string& cutBase, const string& cutEB, const str
     m_cutEB = cutEB;
     TCut cutCentral(cutBase.c_str());
     //TCut cutCombination(cutComb.c_str());
-    TCut cutBarrel(cutEB.c_str());
+    //TCut cutBarrel(cutEB.c_str());
+    TCut cutBarrel("(1)");
     cout << "INFO: Cuts for EB training = '" << string(cutCentral && cutBarrel) << "'\n";
     //cout << "INFO: Cuts for combination training    = '" << string(cutCombination) << "'\n";
     // weight * cuts

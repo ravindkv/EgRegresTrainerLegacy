@@ -17,6 +17,7 @@
 #define ROO_HYBRIDBDTAUTOPDF
 
 #include "RooAbsPdf.h"
+#include "RooAbsReal.h"
 #include "RooRealProxy.h"
 #include "RooListProxy.h"
 #include "TMatrixDSym.h"
