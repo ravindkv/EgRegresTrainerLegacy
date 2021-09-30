@@ -83,7 +83,7 @@ steps to be run:
     input_for_res_training = str(regArgs.applied_name()) #save the output name before we change it
     input_for_input_for_res_training = str(input_real_ic)
     
-    if run_step2: subprocess.Popen(["bin/slc6_amd64_gcc700/RegressionApplierExe",input_for_input_for_res_training,input_for_res_training,"--gbrForestFileEE",forest_ee_file,"--gbrForestFileEB",forest_eb_file,"--nrThreads","4","--treeName",regArgs.tree_name,"--writeFullTree","1","--regOutTag","Ideal"]).communicate()
+    if run_step2: subprocess.Popen(["bin/$SCRAM_ARCH/RegressionApplierExe",input_for_input_for_res_training,input_for_res_training,"--gbrForestFileEE",forest_ee_file,"--gbrForestFileEB",forest_eb_file,"--nrThreads","4","--treeName",regArgs.tree_name,"--writeFullTree","1","--regOutTag","Ideal"]).communicate()
 
     regArgs.base_name = "{}_RealIC_RealTraining".format(base_reg_name)
     regArgs.input_training = input_for_res_training

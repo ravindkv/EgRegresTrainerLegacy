@@ -13,13 +13,14 @@ It is very much a legacy tool and E/gamma wishes to move away from it as quickly
 First setup a CMSSW environment. We only link against this so we only need the CMSSW environment variables setup. Any version >=CMSSW_9_4_1 should work.
 
 Then clone this repo into a location of your chosing. It does not have to be under $(CMSSW_BASE)/src, in fact it is better that it is not. 
-```
+
+```bash
 git clone git@github.com:cms-egamma/EgRegresTrainerLegacy.git
 cd EgRegresTrainerLegacy 
 gmake RegressionTrainerExe -j 8
 gmake RegressionApplierExe -j 8
 export PATH=$PATH:./bin/$SCRAM_ARCH #add the binary location to path
-export PYTHON27PATH = $PYTHON27PATH:python #adds the python sub dir to python path, this may be PYTHONPATH in some systems 
+export PYTHON27PATH=$PYTHON27PATH:python #adds the python sub dir to python path, this may be PYTHONPATH in some systems
 ```
 
 ## running the regression training
@@ -64,7 +65,7 @@ On a 24 core machine (using all 24 cores of course), this takes under 5mins. The
 
 
 Then to make an example resolution plot:
-```
+```bash
 export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$PWD/include #otherwise will get header not found errors
 root rootScripts/setupExample.c
 hists = makeHists(egRegTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5},150,0,1.5,{"regInvTar*regMean","regEcalInvTar*regEcalMean:sc.seedEta","ele.energy/mc.energy:sc.seedEta"},"mc.energy>0 && sc.sigmaIEtaIEta>0 && mc.dR<0.1 && mc.pt>20 && mc.pt<60");

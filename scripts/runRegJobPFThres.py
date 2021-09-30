@@ -77,16 +77,16 @@ def run_eb_and_ee(regArgs):
     regArgs.do_eb = True
     make_cfg(args=regArgs)
     print "starting: {}".format(regArgs.name())
-    subprocess.Popen(["bin/slc6_amd64_gcc700/RegressionTrainerExe",regArgs.cfg_name()]).communicate()
+    subprocess.Popen(["bin/$SCRAM_ARCH/RegressionTrainerExe",regArgs.cfg_name()]).communicate()
     forest_eb_file = regArgs.output_name()
     
     regArgs.do_eb = False
     make_cfg(args=regArgs)
     print "starting: {}".format(regArgs.name())
-    subprocess.Popen(["bin/slc6_amd64_gcc700/RegressionTrainerExe",regArgs.cfg_name()]).communicate()
+    subprocess.Popen(["bin/$SCRAM_ARCH/RegressionTrainerExe",regArgs.cfg_name()]).communicate()
     forest_ee_file = regArgs.output_name()
 
-    subprocess.Popen(["bin/slc6_amd64_gcc700/RegressionApplierExe",regArgs.input_testing,regArgs.applied_name(),"--gbrForestFileEE",forest_ee_file,"--gbrForestFileEB",forest_eb_file,"--nrThreads","4","--treeName","egRegTree"]).communicate()
+    subprocess.Popen(["bin/$SCRAM_ARCH/RegressionApplierExe",regArgs.input_testing,regArgs.applied_name(),"--gbrForestFileEE",forest_ee_file,"--gbrForestFileEB",forest_eb_file,"--nrThreads","4","--treeName","egRegTree"]).communicate()
     
     print "made ",regArgs.applied_name()
     
