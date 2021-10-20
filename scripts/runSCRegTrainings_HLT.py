@@ -26,7 +26,7 @@ def main():
     #setup the selection (event number cuts come later)
     cuts_name = "stdCuts" 
     #base_ele_cuts = "(mc.energy>0 && ssFrac.sigmaIEtaIEta>0 && ssFrac.sigmaIPhiIPhi>0 && {extra_cuts})"
-    base_ele_cuts = "(eg_gen_energy>0 && eg_sigmaIEtaIEta>0 && {extra_cuts})"
+    base_ele_cuts = "(eg_gen_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && {extra_cuts})"
     
     #prefixes all the regressions produced
     if args.era=='2016':
@@ -46,10 +46,10 @@ def main():
         real_eventnr_cut = "evt.eventnr%5==1" #4million electrons
     elif args.era=='Run3':
         base_reg_name = "Run3HLT"
-        input_ideal_ic  = "{}/test.root".format(args.input_dir)
-        input_real_ic = "{}/test.root".format(args.input_dir)
-        ideal_eventnr_cut = "eventnr%5==0"  #4million electrons (we determined 4 million was optimal but after the 2017 was done)
-        real_eventnr_cut = "eventnr%5==1" #4million electrons (we determined 4 million was optimal but after the 2017 was done)
+        input_ideal_ic  = "{}/HLTAnalyzerTree_IDEAL.root".format(args.input_dir)
+        input_real_ic = "{}/HLTAnalyzerTree_REAL.root".format(args.input_dir)
+        ideal_eventnr_cut = "eventnr%2==0"  #4million electrons (we determined 4 million was optimal but after the 2017 was done)
+        real_eventnr_cut = "eventnr%2==1" #4million electrons (we determined 4 million was optimal but after the 2017 was done)
 
     else:
         raise ValueError("era {} is invalid, options are 2016/2017/2018".format(era))
