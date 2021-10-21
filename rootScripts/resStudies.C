@@ -296,6 +296,78 @@ void plotResHist(ResFitParam& fitStd,ResFitParam& fitAlt,ResFitParam& fitSC)
   leg->Draw();
 }
 
+// void plotResHist(ResFitParam& fitStd,ResFitParam& fitAlt,ResFitParam& fitSC)
+void plotResHist(ResFitParam& fitStd,ResFitParam& fitAlt)
+{
+
+  //std::vector<std::string> legNames = {"current","proposed","SC energy"};
+
+  TGraph * histStd = static_cast<TGraph*>(fitStd.plot->getHist("h_res"));
+  TGraph * histAlt = static_cast<TGraph*>(fitAlt.plot->getHist("h_res"));
+  // TGraph * histSC = static_cast<TGraph*>(fitSC.plot->getHist("h_res"));
+  // std::cout <<"hists "<<histStd<<" "<<histAlt<<" "<<histSC<<std::endl;
+  std::cout <<"hists "<<histStd<<" "<<histAlt<<" "<<std::endl;
+  AnaFuncs::setHistAttributes(histStd,kAzure+8,2,8,kAzure+8);
+  AnaFuncs::setHistAttributes(histAlt,kOrange+7,2,22,kOrange+7);
+  // AnaFuncs::setHistAttributes(histSC,kBlue+2,2,23,kBlue+2);
+  // fitSC.plot->getCurve("model_Norm[res]")->SetLineColor(kBlue+2);
+  fitAlt.plot->getCurve("model_Norm[res]")->SetLineColor(kOrange+7);
+  fitStd.plot->getCurve("model_Norm[res]")->SetLineColor(kAzure+8);
+  //  fitSC.hist->GetFunction(fitSC.func->GetName())->SetLineColor(kBlue+2);
+  //  fitSC.hist->GetFunction(fitSC.func->GetName())->SetLineStyle(2);
+  //fitAlt.hist->GetFunction(fitAlt.func->GetName())->SetLineColor(kOrange+7);
+  //fitAlt.hist->GetFunction(fitAlt.func->GetName())->SetLineStyle(2);
+  //fitStd.hist->GetFunction(fitStd.func->GetName())->SetLineColor(kAzure+8);
+  //fitStd.hist->GetFunction(fitStd.func->GetName())->SetLineStyle(2);aram.plot->SetTitle("")
+
+  double max = std::max(fitStd.plot->GetMaximum(),fitAlt.plot->GetMaximum());
+  // max = std::max(fitSC.plot->GetMaximum(),max);
+  fitStd.plot->SetMaximum(max);
+  fitStd.plot->remove("model_paramBox");
+  fitAlt.plot->remove("model_paramBox");
+  // fitSC.plot->remove("model_paramBox");
+  fitStd.plot->SetTitle("");
+  fitStd.plot->Draw();
+  auto c1 = static_cast<TCanvas*>(gROOT->FindObject("c1"));
+// c1->SetLogy(1);
+  c1->SetGridx(1);
+  c1->SetGridy(1);
+
+
+
+  // auto addOverFlow =[](TH1* hist,float xmax){
+  //   int binNr = AnaFuncs::getBinNr(hist,xmax);
+  //   if(xmax==hist->GetBinLowEdge(binNr)) binNr--;
+  //   double intErr=0;
+  //   double intVal = hist->IntegralAndError(binNr,hist->GetNbinsX()+1,intErr);
+  //   hist->SetBinContent(binNr,intVal);
+  //   hist->SetBinError(binNr,intErr);
+  //   for(int i=binNr+1;i<=hist->GetNbinsX()+1;i++){
+  //     hist->SetBinContent(i,0);
+  //     hist->SetBinError(i,0);
+  //   }
+  // };
+  // addOverFlow(fitStd.hist,1.5);
+  // addOverFlow(fitAlt.hist,1.5);
+  // addOverFlow(fitSC.hist,1.5);
+
+  // fitStd.hist->Draw("EP");
+  // fitStd.hist->GetXaxis()->SetRangeUser(0,1.5);
+  // fitStd.hist->SetTitle(";E^{reco}/E^{gen};#events");
+  // fitStd.hist->GetXaxis()->SetTitleOffset(0.9);
+  // fitAlt.hist->Draw("SAME EP");
+  // fitSC.hist->Draw("SAME EP");
+
+  fitStd.plot->Draw();
+  fitAlt.plot->Draw("SAME");
+  // fitSC.plot->Draw("SAME");
+
+  // auto leg = HistFuncs::makeLegend({{fitStd.plot->getHist("h_res"),fitStd.legName},{fitAlt.plot->getHist("h_res"),fitAlt.legName},{fitSC.plot->getHist("h_res"),fitSC.legName}},0.167038,0.56446,0.488864,0.735192);
+  auto leg = HistFuncs::makeLegend({{fitStd.plot->getHist("h_res"),fitStd.legName},{fitAlt.plot->getHist("h_res"),fitAlt.legName}},0.167038,0.56446,0.488864,0.735192);
+  leg->SetFillStyle(0);
+  leg->Draw();
+}
+
 
 void makeResPlots(TTree* tree,int nrBins,float xmin,float xmax,std::string cuts,int region,const std::string& dir)
 {
@@ -406,8 +478,48 @@ CBFitParam makeResFitSimple(TH1* hist,float fitMin,float fitMax)
 
 
 
+ResFitParam makeResCBFitv2(TH1* hist,float xmin,float xmax)
+{
+  std::cout << "Main function makeResCBFitv2" << std::endl;
+  RooRealVar  res("res","E^{reco}/E^{gen}", xmin,xmax,"");
+  res.setBins(10000,"cache") ;
+  res.setMin("cache",xmin) ;
+  res.setMax("cache",xmax) ;
+
+  RooRealVar  nsig("N_{S}", "#signal events", 10659, 9000, 100000000.);
+  RooRealVar  cbSigma("#sigma_{CB}","CB Width", 0.02, 0.0, 0.05,"");
+  RooRealVar mean( "#DeltaE", "mean_{cb}", 1. ,0.5,1.5,"");
+  RooRealVar alpha( "alpha_{cb}", "alpha_{cb}", 7.2 ,0,10);
+  RooRealVar n( "n_{cb}", "n_{cb}", 5.81 ,0,20);
+  // RooRealVar alpha( "alpha_{cb}", "alpha_{cb}", 15.2 ,10,20);
+  // RooRealVar n( "n_{cb}", "n_{cb}", 30.81 ,20,40);
+  RooCBShape cb( "cb", "cb",res, mean, cbSigma, alpha, n );
+
+
+  RooDataHist data("res","E^{reco}/E^{gen}",res,hist);
+
+  RooAddPdf      model("model", "model", RooArgList(cb), RooArgList(nsig));
+  //auto& model = cb;
+  model.fitTo(data,RooFit::FitOptions("mh"),RooFit::Optimize(0),RooFit::Timer(1));
+  model.fitTo(data,RooFit::FitOptions("mh"),RooFit::Optimize(0),RooFit::Timer(1));
+
+  RooPlot* plot = res.frame(RooFit::Range(xmin,xmax),RooFit::Bins(100));
+
+  data.plotOn(plot,RooFit::MarkerSize(1.0));
+  model.plotOn(plot);
+
+
+  // model.paramOn(plot,RooFit::Format("NEU", RooFit::AutoPrecision(2)),RooFit::ShowConstants(true),RooFit::Layout(0.6,0.95,0.8),RooFit::Parameters(RooArgSet(mean,cbSigma)));
+  model.paramOn(plot,RooFit::Format("NEU", RooFit::AutoPrecision(2)),RooFit::ShowConstants(true),RooFit::Layout(0.6,0.95,0.8));//,RooFit::Parameters(RooArgSet(mean,cbSigma)));
+
+  ResFitParam fitParam;
+  fitParam.fill(mean,cbSigma,plot);
+  return fitParam;
+}
+
 ResFitParam makeResCBFit(TH1* hist,float xmin,float xmax)
 {
+  std::cout << "Main function makeResCBFit" << std::endl;
   RooRealVar  res("res","E^{reco}/E^{gen}", xmin,xmax,"");
   res.setBins(10000,"cache") ;
   res.setMin("cache",xmin) ;
@@ -416,8 +528,8 @@ ResFitParam makeResCBFit(TH1* hist,float xmin,float xmax)
   RooRealVar  nsig("N_{S}", "#signal events", 90000, 0, 100000000.);
   RooRealVar  cbSigma("#sigma_{CB}","CB Width", 1.5, 0.0, 10,"");
   RooRealVar mean( "#DeltaE", "mean_{cb}", 1. ,0.5,1.5,"");
-  //RooRealVar alpha( "alpha_{cb}", "alpha_{cb}", 1.2 ,0,10);
-  //  RooRealVar n( "n_{cb}", "n_{cb}", 0.81 ,0,20);
+  // RooRealVar alpha( "alpha_{cb}", "alpha_{cb}", 1.2 ,0,10);
+  // RooRealVar n( "n_{cb}", "n_{cb}", 0.81 ,0,20);
   RooRealVar alpha( "alpha_{cb}", "alpha_{cb}", 1.2 ,0,20);
   RooRealVar n( "n_{cb}", "n_{cb}", 0.81 ,0,40);
   RooCBShape cb( "cb", "cb",res, mean, cbSigma, alpha, n );
@@ -484,9 +596,20 @@ ResFitParam makeResCruijffFit(TH1* hist,float xmin,float xmax)
 
 ResFitParam makeResFit(TH1* hist,float xmin,float xmax)
 {
+  std::cout << "RAM: hist name: " << hist->GetName() << std::endl;
+  std::cout << "[INFO:resStudies.C#559]" << std::endl;
   if(resFit::fitType == resFit::FitType::CB){
-    return makeResCBFit(hist,xmin,xmax);
+    std::cout << "==========================================================" << std::endl;
+    std::cout << "           Hist name: " << hist->GetName() << "           " << std::endl;
+    std::cout << "==========================================================" << std::endl;
+    std::cout << "[INFO:resStudies.C#561]" << std::endl;
+    if (TString(hist->GetName()).Contains("oldCorrHist"))
+      // return makeResCBFit(hist,xmin,xmax);
+      return makeResCBFitv2(hist,xmin,xmax);
+    else
+      return makeResCBFit(hist,xmin,xmax);
   }else{
+    std::cout << "[INFO:resStudies.C#564]" << std::endl;
     return makeResCruijffFit(hist,xmin,xmax);
   }
 }
