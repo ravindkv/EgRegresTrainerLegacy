@@ -2357,6 +2357,7 @@ double RooHybridBDTAutoPdf::EvalLossRooFit() {
     nllvals[ithread] += -weight*log(pdfval);
     
     // if (RooAbsReal::numEvalErrors()>0 || RooAbsPdf::evalError() || pdfval<0.) {
+    // if (RooAbsReal::numEvalErrors()>0 || RooAbsReal::EvalError() || pdfval<0.) {
     // FIXME: Retrive evalError(); for now we are commenting this
     if (RooAbsReal::numEvalErrors()>0 || pdfval<0.) {
       nllvals[ithread] += std::numeric_limits<float>::max();
