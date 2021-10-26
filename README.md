@@ -69,13 +69,9 @@ Then to make an example resolution plot:
 export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$PWD/include
 #otherwise will get header not found errors
 root rootScripts/setupExample.c
-root -l -b rootScripts/setupExample.c
-# hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5},150,0,1.5,{"regInvTar*regMean","regEcalInvTar*regEcalMean:sc.seedEta","ele.energy/mc.energy:sc.seedEta"},"mc.energy>0 && sc.sigmaIEtaIEta>0 && mc.dR<0.1 && mc.pt>20 && mc.pt<60");
-# hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5},150,0,11.5,{"invTar*mean","invTar*mean:eg_bestTrkDEtaSeed","eg_gen_energy/eg_energy:eg_bestTrkDEtaSeed"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_gen_pt>20 && eg_gen_pt<60");
-# hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5},150,0,1.5,{"invTar*mean:eg_gen_eta","regIdealInvTar*regIdealMean:eg_gen_eta","eg_energy/eg_gen_energy:eg_gen_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_gen_pt>20 && eg_gen_pt<500");
+# root -l -b rootScripts/setupExample.c
 hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"invTar*mean:eg_gen_eta","eg_energy/eg_gen_energy:eg_gen_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_gen_pt>20 && eg_gen_pt<60");
 compareRes({hists[0],"ECAL Energy"},{hists[1],"existing energy"},6);
-# compareRes({hists[0],"ECAL-Trk Energy"},{hists[1],"ECAL Only Energy"},{hists[2],"existing energy"},6);
 ```
 
 Common issues:

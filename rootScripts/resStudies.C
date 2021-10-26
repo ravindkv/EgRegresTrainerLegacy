@@ -519,7 +519,6 @@ ResFitParam makeResCBFitv2(TH1* hist,float xmin,float xmax)
 
 ResFitParam makeResCBFit(TH1* hist,float xmin,float xmax)
 {
-  std::cout << "Main function makeResCBFit" << std::endl;
   RooRealVar  res("res","E^{reco}/E^{gen}", xmin,xmax,"");
   res.setBins(10000,"cache") ;
   res.setMin("cache",xmin) ;
@@ -596,20 +595,16 @@ ResFitParam makeResCruijffFit(TH1* hist,float xmin,float xmax)
 
 ResFitParam makeResFit(TH1* hist,float xmin,float xmax)
 {
-  std::cout << "RAM: hist name: " << hist->GetName() << std::endl;
-  std::cout << "[INFO:resStudies.C#559]" << std::endl;
   if(resFit::fitType == resFit::FitType::CB){
     std::cout << "==========================================================" << std::endl;
     std::cout << "           Hist name: " << hist->GetName() << "           " << std::endl;
     std::cout << "==========================================================" << std::endl;
-    std::cout << "[INFO:resStudies.C#561]" << std::endl;
     if (TString(hist->GetName()).Contains("oldCorrHist"))
       // return makeResCBFit(hist,xmin,xmax);
       return makeResCBFitv2(hist,xmin,xmax);
     else
       return makeResCBFit(hist,xmin,xmax);
   }else{
-    std::cout << "[INFO:resStudies.C#564]" << std::endl;
     return makeResCruijffFit(hist,xmin,xmax);
   }
 }

@@ -1050,7 +1050,6 @@ TH1* HistFuncs::compTwoVars(TTree* tree,int nrBins,float xmin,float xmax,const s
 
 TH1* HistFuncs::makeHist(TTree* tree,int nrBins,float xmin,float xmax,const std::string& var,const std::string& cuts)
 {
-std::cout << "first" << std::endl;
   TH1* hist = new TH1D("var1Hist","temp",nrBins,xmin,xmax);
   hist->Sumw2();
 
@@ -1061,7 +1060,6 @@ std::cout << "first" << std::endl;
 }
 TH1* HistFuncs::makeHist(TTree* tree,const HistFuncs::Bins1D& bins,const std::string& var,const std::string& cuts)
 {
-std::cout << "second" << std::endl;
   TH1* hist=bins.makeHist("var1Hist");
   hist->Sumw2();
 
@@ -1073,7 +1071,6 @@ std::cout << "second" << std::endl;
 
 TH2* HistFuncs::makeHist(TTree* tree,int nrBinsX,float xmin,float xmax,int nrBinsY,float ymin,float ymax,const std::string& var,const std::string& cuts)
 {
-std::cout << "third" << std::endl;
   TH2* hist = new TH2D("var1Hist","temp",nrBinsX,xmin,xmax,nrBinsY,ymin,ymax);
   hist->Sumw2();
   tree->Draw((var+">>var1Hist").c_str(),cuts.c_str(),"goff");
@@ -1083,14 +1080,9 @@ std::cout << "third" << std::endl;
 
 TH2* HistFuncs::makeHist(TTree* tree,const std::vector<double>& binLowEdges,int nrBinsY,float ymin,float ymax,const std::string& var,const std::string& cuts)
 {
-std::cout << "fourth" << std::endl;
-  // auto c1 = static_cast<TCanvas*>(gROOT->FindObject("c1"));
-  // c1->Update();
   TH2* hist = new TH2D("var1Hist","temp",binLowEdges.size()-1,binLowEdges.data(),nrBinsY,ymin,ymax);
   hist->Sumw2();
   tree->Draw((var+">>var1Hist").c_str(),cuts.c_str(),"goff");
-  // hist->Draw("colz");
-  // c1->SaveAs("Test.png");
   hist->SetDirectory(0);
   return hist;
 }

@@ -14,7 +14,6 @@
 #include "RooHist.h"
 #include "TROOT.h"
 
-
 void ResPlotter::Config::setDefaults()
 {
   nrResBins = 300;
@@ -84,7 +83,6 @@ void ResPlotter::makeHists(std::vector<TTree*> trees,const std::string& label,co
 			   const std::string& vsVar1,const std::string& vsVar2,
 			   const std::vector<double>& vsVar1Bins,const std::vector<double>& vsVar2Bins)
 {
-  std::cout << "[INFO:ResPlotter#87]..." << std::endl;
   if(trees.size()!=cfg_.vars.size()){
     LogErr<<" error trees size "<<trees.size()<<" does not equal vars size "<<cfg_.vars.size()<<std::endl;
     return;
@@ -118,7 +116,6 @@ ResPlotter::makeHists(TTree* tree,const std::vector<std::pair<std::string,std::s
 		      const std::string& cuts)const			    
 {
 
-  std::cout << "[INFO:ResPlotter#121]..." << std::endl;
   std::vector<std::vector<std::pair<TH2*,std::string> > > outHistsVec(vsVar1Bins_.size()-1);
   for(auto& hists : outHistsVec){
     for(const auto& var : vars){

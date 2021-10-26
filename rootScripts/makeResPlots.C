@@ -55,7 +55,6 @@ TGraph* compResVsPlot(TH2* newCorrHist2D,TH2* oldCorrHist2D,TH2* rawHist2D,float
 
 std::vector<TH2*> makeHists(TTree* tree,int nrBinsX,float xmin,float xmax,int nrBinsY,float ymin,float ymax,const std::vector<std::string>& vars,const std::string& cuts)
 {
-  std::cout << "[INFO#58] First" << std::endl;
   std::vector<TH2*> hists;
   for(auto& var : vars){
     hists.push_back(HistFuncs::makeHist(tree,nrBinsX,xmin,xmax,nrBinsY,ymin,ymax,var,cuts));
@@ -65,10 +64,8 @@ std::vector<TH2*> makeHists(TTree* tree,int nrBinsX,float xmin,float xmax,int nr
 
 std::vector<TH2*> makeHists(TTree* tree,const std::vector<double>& xbins,int nrBinsY,float ymin,float ymax,const std::vector<std::string>& vars,const std::string& cuts)
 {
-  std::cout << "[INFO#68] Second" << std::endl;
   std::vector<TH2*> hists;
   for(auto& var : vars){
-    std::cout << "Variables: " << var << std::endl;
     hists.push_back(HistFuncs::makeHist(tree,xbins,nrBinsY,ymin,ymax,var,cuts));
   }
   return hists;
