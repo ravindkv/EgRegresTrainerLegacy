@@ -14,7 +14,7 @@
 #include <cmath>
 #include <thread>
 #include <future>
-  
+
 
 struct TreeData{
 public:
@@ -26,7 +26,7 @@ public:
   float mean;
   float sigma;
   float invTar;
-    
+
   void createBranches(TTree* tree){
     tree->Branch("evt",&evt,evt.contents().c_str());
     tree->Branch("mean",&mean,"mean/F");
@@ -56,7 +56,7 @@ public:
   GBRForestCont(const GBRForestCont&)=delete;
   GBRForestCont& operator=(const GBRForestCont&)=delete;
   ~GBRForestCont();
-  
+
   const std::pair<const GBRForestD*,const GBRForestD*>& operator()(double et,bool isEB)const{
     if(et<highEtThres_) return isEB ? eb_ : ee_;
     else return isEB ? ebHighEt_ : eeHighEt_;
@@ -110,19 +110,19 @@ int main(int argc, char** argv)
   cmdLineInt.addOption("gbrForestFileEBHighEt",gbrFilenameEBHighEt,"","gbrForestFile for barrel high et, highEtThres must be set for this to be read");
   cmdLineInt.addOption("gbrForestFileEEHighEt",gbrFilenameEEHighEt,"","gbrForestFile for endcap high et, highEtThres must be set for this to be read");
   cmdLineInt.addOption("highEtThres",&highEtThres,std::numeric_limits<double>::max(),"threshold at which to apply the high Et forests");
-  cmdLineInt.addOption("etBinVar",etBinVar,"(sc.rawEnergy+sc.rawESEnergy)*sin(2*atan(exp(-1*sc.scEta)))","et variable to bin vs");
+  cmdLineInt.addOption("etBinVar",etBinVar,"(eg_rawEnergy)*sin(2*atan(exp(-1*eg_eta)))","et variable to bin vs");
   cmdLineInt.addOption("nrThreads",&nrThreads,1,"number of threads for reading tree");
   cmdLineInt.addOption("treeName",treeName,"egRegTree"," name of the tree");
   cmdLineInt.addOption("regOutTag",regOutTagChar,"","tag of the output regression branches , eg \"reg{regOutTagChar}Mean\" if writing full tree");
   cmdLineInt.addOption("writeFullTree",&writeFullTree,false," writes the full tree to file");
   if(!cmdLineInt.processCmdLine(argc,argv)) return 0; //exit if we havnt managed to get required parameters
- 
+
   const std::string regOutTag(regOutTagChar);
 
   TTree* inTree = HistFuncs::makeChain(treeName,inFilename);
   TFile* outFile = new TFile(outFilename,"RECREATE");
   TTree* outTree = new TTree((std::string(treeName)+"Friend").c_str(),"");
-    
+
   TreeData outTreeData;
   outTreeData.createBranches(outTree);
 
@@ -143,7 +143,7 @@ int main(int argc, char** argv)
     }
     return varsStr;
   };
-  
+
   //now we get the target variable from the files
   //it rather assumes the high pt ones use the same variables
   //which currently is a good assumption
@@ -154,7 +154,7 @@ int main(int argc, char** argv)
   const std::string varsEE = readVarList(gbrFileEE,"varlistEE");
   const std::string* targetEB = reinterpret_cast<std::string*>(gbrFileEB->Get("targetEB"));
   const std::string* targetEE = reinterpret_cast<std::string*>(gbrFileEE->Get("targetEE"));
- 
+
   if(varsEB.empty() || varsEE.empty()){
     std::cout <<"vars not found, exiting"<<std::endl;
     outFile->Write();
@@ -163,7 +163,7 @@ int main(int argc, char** argv)
 
   const auto regDataEBAll = HistFuncs::readTree(inTree,varsEB+":"+*targetEB,"");
   const auto regDataEEAll = HistFuncs::readTree(inTree,varsEE+":"+*targetEE,"");
-  const auto evtData = HistFuncs::readTree(inTree,"runnr:eventnr:lumiSec:sc.isEB:"+std::string(etBinVar),"");
+  const auto evtData = HistFuncs::readTree(inTree,"runnr:eventnr:lumiSec:eg_isEB:"+std::string(etBinVar),"");
   fillTree(regDataEBAll,regDataEEAll,evtData,gbrForests,outTreeData,outTree,nrThreads);
 
 
@@ -176,11 +176,13 @@ int main(int argc, char** argv)
     outFile = new TFile(outFilename,"UPDATE");
     outTree = static_cast<TTree*>(outFile->Get((std::string(treeName)+"Friend").c_str()));
     outTreeData.setBranchAddresses(outTree);
-    TTree* fullTree = inTree->CloneTree();
+    std::cout<<"\n===> [INFO::RegressionApplier] Before Fast Tree Read... RAM" << std::endl;
+    TTree* fullTree = inTree->CloneTree(-1,"fast");
+    std::cout<<"\n===> [INFO::RegressionApplier] After Fast Tree Read... RAM" << std::endl;
     TBranch* fullMeanBranch=fullTree->Branch(("reg"+regOutTag+"Mean").c_str(),&outTreeData.mean);
     TBranch* fullSigmaBranch=fullTree->Branch(("reg"+regOutTag+"Sigma").c_str(),&outTreeData.sigma);
     TBranch* fullInvTarBranch=fullTree->Branch(("reg"+regOutTag+"InvTar").c_str(),&outTreeData.invTar);
-  
+
     int nrEntries = outTree->GetEntries();
     for(int entryNr=0;entryNr<nrEntries;entryNr++){
       outTree->GetEntry(entryNr);
@@ -206,11 +208,11 @@ void fillTree(const std::vector<std::vector<float> >& regDataEB,
   AnaFuncs::Timer timer;
   using RegResult = std::future<std::pair<double,double> >;
   std::vector<RegResult> threads(nrThreads);
-  
+
   std::vector<RegFunc> regFuncs(nrThreads);
   std::vector<unsigned int> threadEntryNrs;
   for(unsigned int i=0;i<nrThreads;i++) threadEntryNrs.push_back(i);
-  
+
   auto initThread = [&threads,&regDataEB,&regDataEE,
 		     &gbrForests,
 		     &regFuncs,&evtData,&threadEntryNrs](unsigned int threadNr){
@@ -232,14 +234,14 @@ void fillTree(const std::vector<std::vector<float> >& regDataEB,
   while(nrActiveThreads!=0){
     unsigned int newNrActiveThreads = 0;
     threads[0].wait();
- 
+
     for(unsigned int threadNr=0;threadNr<nrActiveThreads;threadNr++){
-      threads[threadNr].wait();	
+      threads[threadNr].wait();
       auto regResult = threads[threadNr].get();
-	
+
       auto entryNr = threadEntryNrs[threadNr];
       if(entryNr%100000==0) std::cout <<"entry "<<entryNr<< "/" <<regDataEB.size()<<" time "<<timer<<std::endl;
-      
+
       // if(!evtData[entryNr][3] && regResult.second>0.2 && regResult.second<0.3){
       //  	std::cout <<"dumping reg data "<<evtData[entryNr][1]<<" isEB "<<evtData[entryNr][3]<<std::endl;
       //  	for(size_t i=0;i<regDataEE[entryNr].size();i++){
@@ -253,7 +255,7 @@ void fillTree(const std::vector<std::vector<float> >& regDataEB,
       outTreeData.mean = regResult.first;
       outTreeData.sigma = regResult.second;
       outTreeData.invTar = evtDataEntry[3] ? 1./regDataEB[entryNr].back() : 1./regDataEE[entryNr].back();
-      outTree->Fill();	
+      outTree->Fill();
       threadEntryNrs[threadNr]+=nrThreads;
       if(initThread(threadNr)) newNrActiveThreads = threadNr+1;
     }
@@ -263,23 +265,23 @@ void fillTree(const std::vector<std::vector<float> >& regDataEB,
 
 std::pair<double,double> getRes(const std::vector<float>& regData,const std::pair<const GBRForestD*,const GBRForestD*>& gbrForest)
 {
-  
+
   //(These should be stored inside the conditions object in the future as well)
   constexpr double meanlimlow  = 0.2;
   constexpr double meanlimhigh = 2.0;
   constexpr double meanoffset  = meanlimlow + 0.5*(meanlimhigh-meanlimlow);
   constexpr double meanscale   = 0.5*(meanlimhigh-meanlimlow);
-  
+
   constexpr double sigmalimlow  = 0.0002;
   constexpr double sigmalimhigh = 0.5;
   constexpr double sigmaoffset  = sigmalimlow + 0.5*(sigmalimhigh-sigmalimlow);
-  constexpr double sigmascale   = 0.5*(sigmalimhigh-sigmalimlow);  
-  
-  
+  constexpr double sigmascale   = 0.5*(sigmalimhigh-sigmalimlow);
+
+
   //these are the actual BDT responses
   double rawmean = gbrForest.first->GetResponse(regData.data());
   double rawsigma = gbrForest.second->GetResponse(regData.data());
-  
+
   //apply transformation to limited output range (matching the training)
   double mean = meanoffset + meanscale*vdt::fast_sin(rawmean);
   double sigma = sigmaoffset + sigmascale*vdt::fast_sin(rawsigma);
@@ -304,7 +306,7 @@ GBRForestCont::GBRForestCont(const std::string& ebFilename,
 }
 
 void GBRForestCont::loadForests(std::pair<const GBRForestD*,const GBRForestD*>& forests,const std::string& filename,const std::string& tag)
-{ 
+{
 
   TFile* file = TFile::Open(filename.c_str(),"READ");
   forests.first = reinterpret_cast<GBRForestD*>(file->Get((tag+"Correction").c_str()));
