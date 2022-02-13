@@ -8,3 +8,8 @@
 *.root
 *_C*
 *.pcm
+*.swp
+*.txt
+workspace.code-workspace
+test.C
+test.h

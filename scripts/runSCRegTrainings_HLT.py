@@ -8,7 +8,7 @@ except ImportError:
     raise ImportError('module regtools not found, please add "python" to PYTHON27PATH or PYTHONPATH as appropriate eg\n  export PYTHON27PATH=$PYTHON27PATH:python\nand try again')
 import time
 import argparse
-def main():  
+def main():
 
     parser = argparse.ArgumentParser(description='runs the SC regression trainings')
     parser.add_argument('--era',required=True,help='year to produce for, 2016, 2017, 2018, Run3 are the options')
@@ -24,24 +24,24 @@ def main():
     run_step3 = True
 
     #setup the selection (event number cuts come later)
-    cuts_name = "stdCuts" 
+    cuts_name = "stdCuts"
     #base_ele_cuts = "(mc.energy>0 && ssFrac.sigmaIEtaIEta>0 && ssFrac.sigmaIPhiIPhi>0 && {extra_cuts})"
     base_ele_cuts = "(eg_gen_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && {extra_cuts})"
-    
+
     #prefixes all the regressions produced
     if args.era=='2016':
         base_reg_name = "scReg2016UL"
         raise ValueError("era 2016 is not yet implimented".format(era))
     elif args.era=='2017':
-        base_reg_name = "scReg2017UL"    
+        base_reg_name = "scReg2017UL"
         input_ideal_ic  = "{}/DoubleElectron_FlatPt-1To300_2017ConditionsFlatPU0to70ECALGT_105X_mc2017_realistic_IdealEcalIC_v5-v2_AODSIM_EgRegTreeV1_extraVars.root".format(args.input_dir)
-        input_real_ic = "{}/DoubleElectron_FlatPt-1To300_2017ConditionsFlatPU0to70_105X_mc2017_realistic_v5-v2_AODSIM_EgRegTreeV1_4.root".format(args.input_dir)   
+        input_real_ic = "{}/DoubleElectron_FlatPt-1To300_2017ConditionsFlatPU0to70_105X_mc2017_realistic_v5-v2_AODSIM_EgRegTreeV1_4.root".format(args.input_dir)
         ideal_eventnr_cut = "evt.eventnr%2==0"
         real_eventnr_cut = "evt.eventnr%2==0" #events in the ntuple are different so can get away with this
     elif args.era=='2018':
-        base_reg_name = "scReg2018UL"    
+        base_reg_name = "scReg2018UL"
         input_ideal_ic  = "{}/DoubleElectron_FlatPt-1To300_2018ConditionsFlatPU0to70ECALGT_105X_upgrade2018_realistic_IdealEcalIC_v4-v1_AODSIM_EgRegTreeV5_partStatsV2.root".format(args.input_dir)
-        input_real_ic = "{}/DoubleElectron_FlatPt-1To300_2018ConditionsFlatPU0to70RAW_105X_upgrade2018_realistic_v4-v1_AODSIM_EgRegTreeV5_partStatsV2.root".format(args.input_dir)    
+        input_real_ic = "{}/DoubleElectron_FlatPt-1To300_2018ConditionsFlatPU0to70RAW_105X_upgrade2018_realistic_v4-v1_AODSIM_EgRegTreeV5_partStatsV2.root".format(args.input_dir)
         ideal_eventnr_cut = "evt.eventnr%5==0"  #4million electrons
         real_eventnr_cut = "evt.eventnr%5==1" #4million electrons
     elif args.era=='Run3':
@@ -54,7 +54,7 @@ def main():
     else:
         raise ValueError("era {} is invalid, options are 2016/2017/2018".format(era))
 
-    
+
     regArgs = RegArgs()
     regArgs.input_training =  str(input_ideal_ic)
     regArgs.input_testing = str(input_ideal_ic)
@@ -65,8 +65,8 @@ def main():
     regArgs.base_name = "{}_IdealIC_IdealTraining".format(base_reg_name)
     regArgs.cuts_base = base_ele_cuts.format(extra_cuts = ideal_eventnr_cut)
     regArgs.ntrees = 1500
- 
-    print """about to run the supercluster regression with: 
+
+    print """about to run the supercluster regression with:
     name: {name}
     ideal ic input: {ideal_ic}
     real ic input: {real_ic}
@@ -81,7 +81,7 @@ steps to be run:
         os.makedirs(args.output_dir)
 
     if run_step1: regArgs.run_eb_and_ee()
-    
+
     regArgs.do_eb = True
     forest_eb_file = regArgs.output_name()
     regArgs.do_eb = False
@@ -90,7 +90,7 @@ steps to be run:
     regArgs.base_name = "{}_RealIC_IdealTraining".format(base_reg_name)
     input_for_res_training = str(regArgs.applied_name()) #save the output name before we change it
     input_for_input_for_res_training = str(input_real_ic)
-    
+
     if run_step2: subprocess.Popen(["bin/slc7_amd64_gcc900/RegressionApplierExe",input_for_input_for_res_training,input_for_res_training,"--gbrForestFileEE",forest_ee_file,"--gbrForestFileEB",forest_eb_file,"--nrThreads","4","--treeName",regArgs.tree_name,"--writeFullTree","1","--regOutTag","Ideal"]).communicate()
 
     regArgs.base_name = "{}_RealIC_RealTraining".format(base_reg_name)

@@ -489,10 +489,10 @@ ResFitParam makeResCBFitv2(TH1* hist,float xmin,float xmax)
   RooRealVar  nsig("N_{S}", "#signal events", 10659, 9000, 100000000.);
   RooRealVar  cbSigma("#sigma_{CB}","CB Width", 0.02, 0.0, 0.05,"");
   RooRealVar mean( "#DeltaE", "mean_{cb}", 1. ,0.5,1.5,"");
-  RooRealVar alpha( "alpha_{cb}", "alpha_{cb}", 7.2 ,0,10);
-  RooRealVar n( "n_{cb}", "n_{cb}", 5.81 ,0,20);
-  // RooRealVar alpha( "alpha_{cb}", "alpha_{cb}", 15.2 ,10,20);
-  // RooRealVar n( "n_{cb}", "n_{cb}", 30.81 ,20,40);
+  // RooRealVar alpha( "alpha_{cb}", "alpha_{cb}", 7.2 ,0,10);
+  // RooRealVar n( "n_{cb}", "n_{cb}", 5.81 ,0,20);
+  RooRealVar alpha( "alpha_{cb}", "alpha_{cb}", 15.2 ,10,20);
+  RooRealVar n( "n_{cb}", "n_{cb}", 30.81 ,20,40);
   RooCBShape cb( "cb", "cb",res, mean, cbSigma, alpha, n );
 
 
