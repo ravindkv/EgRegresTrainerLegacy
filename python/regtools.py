@@ -24,8 +24,8 @@ class RegArgs:
         self.input_testing = "test.root"
         self.input_training = "train.root"
         self.target = "eg_gen_energy/(eg_rawEnergy)"
-        self.var_eb = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
-        self.var_ee = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
+        self.var_eb = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_nrClus"
+        self.var_ee = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_nrClus"
         #self.cuts_base = "(mc.energy>0 && ssFrac.sigmaIEtaIEta>0 && ssFrac.sigmaIPhiIPhi>0 && evt.eventnr%2==0)"
         self.cuts_base = "(eg_gen_energy>0 && eg_sigmaIEtaIEta>0 && eventnr%2==0)"
         self.ntrees = 1500
@@ -50,13 +50,13 @@ class RegArgs:
 
     def set_sc_default(self):
         self.target = "eg_gen_energy/(eg_rawEnergy)"
-        self.var_eb = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
-        self.var_ee = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
+        self.var_eb = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_nrClus"
+        self.var_ee = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_nrClus"
 
     def set_ecal_default(self):
         self.target = "eg_gen_energy/(eg_rawEnergy)"
-        self.var_eb = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
-        self.var_ee = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
+        self.var_eb = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_nrClus"
+        self.var_ee = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_nrClus"
 
     def set_phoecal_default(self):
         #note photon uses cone based H/E rather than tower based H/E as electrons do
@@ -96,8 +96,6 @@ Regression.1.VariablesEB: {args.var_eb}
 Regression.1.VariablesEE: {args.var_ee}
 Regression.1.Target: {args.target}
 Regression.1.CutBase: {args.cuts_base}
-Regression.1.CutEB: eg_isEB
-Regression.1.CutEE: eg_isEE
 Regression.1.MeanMin: {args.mean_min}
 Regression.1.MeanMax: {args.mean_max}
 Regression.1.FixMean: {args.fix_mean}

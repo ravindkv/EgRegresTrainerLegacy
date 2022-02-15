@@ -11,21 +11,21 @@ import argparse
 def main():
 
     parser = argparse.ArgumentParser(description='runs the SC regression trainings')
-    parser.add_argument('--era',required=True,help='year to produce for, 2016, 2017, 2018 are the options')
-    parser.add_argument('--input_dir','-i',default='/eos/home-a/arun/EGMRegression_rootFiles/inputrootfiles',help='input directory with the ntuples')
-    parser.add_argument('--output_dir','-o',default="/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/results",help='output dir')
+    parser.add_argument('--era',required=False,default="2021Run3",help='year to produce for, 2016, 2017, 2018 are the options')
+    parser.add_argument('--input_dir','-i',default='/afs/cern.ch/user/r/rasharma/work/EGamma-POG/HLT_tasks/CPUtoGPUTransition/analyzer/CMSSW_12_0_1/src/',help='input directory with the ntuples')
+    parser.add_argument('--output_dir','-o',default="/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/results11Feb",help='output dir')
     args = parser.parse_args()
 
     #step 1, run calo only regression on the ideal IC to get the mean
     #step 2, apply the mean to the real IC sample and save the result in a tree
     #step 3, retrain the resolution for the real IC on the corrected energy
     run_step1 = True
-    run_step2 = True
-    run_step3 = True
+    run_step2 = False
+    run_step3 = False
 
     #setup the selection (event number cuts come later)
     cuts_name = "stdCuts"
-    base_ele_cuts = "(eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && {extra_cuts})"
+    base_ele_cuts = "(eg_energy>0 && eg_sigmaIEtaIEta>0 && {extra_cuts})"
 
     #prefixes all the regressions produced
     if args.era=='2021Run3':
