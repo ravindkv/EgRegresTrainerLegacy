@@ -110,9 +110,9 @@ int main(int argc, char** argv)
   cmdLineInt.addOption("gbrForestFileEBHighEt",gbrFilenameEBHighEt,"","gbrForestFile for barrel high et, highEtThres must be set for this to be read");
   cmdLineInt.addOption("gbrForestFileEEHighEt",gbrFilenameEEHighEt,"","gbrForestFile for endcap high et, highEtThres must be set for this to be read");
   cmdLineInt.addOption("highEtThres",&highEtThres,std::numeric_limits<double>::max(),"threshold at which to apply the high Et forests");
-  cmdLineInt.addOption("etBinVar",etBinVar,"(sc.rawEnergy+sc.rawESEnergy)*sin(2*atan(exp(-1*sc.scEta)))","et variable to bin vs");
+  cmdLineInt.addOption("etBinVar",etBinVar,"(eg_rawEnergy)*sin(2*atan(exp(-1*eg_eta)))","et variable to bin vs");
   cmdLineInt.addOption("nrThreads",&nrThreads,1,"number of threads for reading tree");
-  cmdLineInt.addOption("treeName",treeName,"egRegTree"," name of the tree");
+  cmdLineInt.addOption("treeName",treeName,"egHLTRun3Tree"," name of the tree");
   cmdLineInt.addOption("regOutTag",regOutTagChar,"","tag of the output regression branches , eg \"reg{regOutTagChar}Mean\" if writing full tree");
   cmdLineInt.addOption("writeFullTree",&writeFullTree,false," writes the full tree to file");
   if(!cmdLineInt.processCmdLine(argc,argv)) return 0; //exit if we havnt managed to get required parameters
@@ -120,6 +120,7 @@ int main(int argc, char** argv)
   const std::string regOutTag(regOutTagChar);
 
   TTree* inTree = HistFuncs::makeChain(treeName,inFilename);
+  std::cout << "[INFO::RegressionApplier.cc#123] Total Entries: " << inTree->GetEntries() << std::endl;
   TFile* outFile = new TFile(outFilename,"RECREATE");
   TTree* outTree = new TTree((std::string(treeName)+"Friend").c_str(),"");
 
@@ -163,7 +164,7 @@ int main(int argc, char** argv)
 
   const auto regDataEBAll = HistFuncs::readTree(inTree,varsEB+":"+*targetEB,"");
   const auto regDataEEAll = HistFuncs::readTree(inTree,varsEE+":"+*targetEE,"");
-  const auto evtData = HistFuncs::readTree(inTree,"runnr:eventnr:lumiSec:sc.isEB:"+std::string(etBinVar),"");
+  const auto evtData = HistFuncs::readTree(inTree,"runnr:eventnr:lumiSec:"+std::string(etBinVar),"");
   fillTree(regDataEBAll,regDataEEAll,evtData,gbrForests,outTreeData,outTree,nrThreads);
 
 
@@ -238,7 +239,8 @@ void fillTree(const std::vector<std::vector<float> >& regDataEB,
       auto regResult = threads[threadNr].get();
 
       auto entryNr = threadEntryNrs[threadNr];
-      if(entryNr%100000==0) std::cout <<"entry "<<entryNr<< "/" <<regDataEB.size()<<" time "<<timer<<std::endl;
+      // if(entryNr%100000==0) std::cout <<"entry "<<entryNr<< "/" <<regDataEB.size()<<" time "<<timer<<std::endl;
+      if(entryNr%500==0) std::cout <<"entry "<<entryNr<< "/" <<regDataEB.size()<<" time "<<timer<<std::endl;
 
       // if(!evtData[entryNr][3] && regResult.second>0.2 && regResult.second<0.3){
       //  	std::cout <<"dumping reg data "<<evtData[entryNr][1]<<" isEB "<<evtData[entryNr][3]<<std::endl;
