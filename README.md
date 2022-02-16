@@ -14,12 +14,14 @@ First setup a CMSSW environment. We only link against this so we only need the C
 
 Then clone this repo into a location of your chosing. It does not have to be under $(CMSSW_BASE)/src, in fact it is better that it is not.
 ```
+cmsrel CMSSW_12_0_1
+cd CMSSW_12_0_1/src
 git clone git@github.com:cms-egamma/EgRegresTrainerLegacy.git
 cd EgRegresTrainerLegacy
 gmake RegressionTrainerExe -j 8
 gmake RegressionApplierExe -j 8
 export PATH=$PATH:./bin/$SCRAM_ARCH #add the binary location to path
-export PYTHON27PATH=$PYTHON27PATH:python #adds the python sub dir to python path, this may be PYTHONPATH in some systems
+export PYTHON27PATH=$PYTHON3PATH:python #adds the python sub dir to python path, this may be PYTHONPATH in some systems
 ```
 
 ## running the regression training
@@ -51,7 +53,7 @@ RegressionApplierExe can read the barrel and endcap root files and apply those c
 
 An example is running the regression training for electrons.
 ```
-./scripts/runSCRegTrainings.py --era "Run3"
+python3 scripts/runSCRegTrainings.py --era "Run3"
 ```
 
 This runs over an input for the ECAL training, does it for both barrel and endcap, makes a new tree with this applied and then uses this tree as input for the ECAL-Trk regression training.
@@ -66,9 +68,9 @@ On a 24 core machine (using all 24 cores of course), this takes under 5mins. The
 Then to make an example resolution plot:
 ```
 export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$PWD/include #otherwise will get header not found errors
-root rootScripts/setupExample.c
-hists = makeHists(egHLTRun3Tree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5},150,0,1.5,{"regInvTar*regMean","regEcalInvTar*regEcalMean:sc.seedEta","ele.energy/mc.energy:sc.seedEta"},"mc.energy>0 && sc.sigmaIEtaIEta>0 && mc.dR<0.1 && mc.pt>20 && mc.pt<60");
-compareRes({hists[0],"ECAL-Trk Energy"},{hists[1],"ECAL Only Energy"},{hists[2],"existing energy"},6); //6 is the bin number, adjust as you like
+root -l -b rootScripts/setupExample.c
+hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"invTar*mean:eg_gen_eta","eg_energy/eg_gen_energy:eg_gen_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_gen_pt<20");
+compareRes({hists[0],"ECAL Energy"},{hists[1],"existing energy"},6);
 ```
 
 Common issues:

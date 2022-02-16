@@ -9,3 +9,4 @@
 *.pcm
 configs/
 *.pyc
+*.png

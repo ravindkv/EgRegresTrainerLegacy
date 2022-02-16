@@ -1,6 +1,6 @@
 /**
  *  @file  GBRMaker.cpp
- *  @brief  
+ *  @brief
  *
  *
  *  @author  Jean-Baptiste Sauvan <sauvan@llr.in2p3.fr>
@@ -20,7 +20,7 @@
 #include "RegresTrainer/GBRMaker.h"
 #include "RegresTrainer/Utilities.h"
 #include "RegresTrainer/GBRTrainer.h"
-#include "CondFormats/EgammaObjects/interface/GBRForest.h"
+#include "CondFormats/GBRForest/interface/GBRForest.h"
 #include "RegresTrainer/GBRApply.h"
 #include "RegresTrainer/VariableCorrectionApply.h"
 #include "RegresTrainer/SmearingCorrection.h"
@@ -80,7 +80,7 @@ void GBRMaker::close()
          }
     }
     m_filesIn.clear();
-    if(m_fileOut) 
+    if(m_fileOut)
     {
         delete m_fileOut;
         m_fileOut = NULL;
@@ -88,34 +88,34 @@ void GBRMaker::close()
     //for(unsigned int i=0;i<m_trees.size();i++)
     //{
     //    //TTree* tree = m_trees[i];
-    //    //if(tree) 
+    //    //if(tree)
     //    //{
     //    //    tree->Delete();
     //    //    tree = NULL;
     //    //}
     //}
     m_trees.clear();
-    if(m_trainerEB) 
+    if(m_trainerEB)
     {
         delete m_trainerEB;
         m_trainerEB = NULL;
     }
-    if(m_trainerEBVar) 
+    if(m_trainerEBVar)
     {
         delete m_trainerEBVar;
         m_trainerEBVar = NULL;
     }
-    if(m_trainerEE) 
+    if(m_trainerEE)
     {
         delete m_trainerEE;
         m_trainerEE = NULL;
     }
-    if(m_trainerEEVar) 
+    if(m_trainerEEVar)
     {
         delete m_trainerEEVar;
         m_trainerEEVar = NULL;
     }
-    if(m_trainerComb) 
+    if(m_trainerComb)
     {
         delete m_trainerComb;
         m_trainerComb = NULL;
@@ -137,7 +137,7 @@ bool GBRMaker::init(const string& name,
     m_name = name;
     m_doErrors = doErrors;
     m_doCombine = doCombine;
-    if(m_doCombine && !m_doErrors) 
+    if(m_doCombine && !m_doErrors)
     {
         cout << "ERROR: combination requested, but without error estimation\n";
         return false;
@@ -176,7 +176,7 @@ bool GBRMaker::init(const string& name,
         m_trainerComb->AddTree(tree);
         m_trees.push_back(tree);
     }
-    
+
     // open output file that will contain the GBRForest
     stringstream outFileName;
     outFileName  <<  outputDirectory  <<  "/"  <<  name  <<  "_results.root";
@@ -275,11 +275,11 @@ void GBRMaker::prepareTraining(const string& cutBase, const string& cutVar, cons
     cout << "INFO: Cuts for EE uncertainty training    = '" << string(cutVariation && cutEndcap) << "'\n";
     cout << "INFO: Cuts for combination training    = '" << string(cutCombination) << "'\n";
     // set cut for training events
-    m_trainerEB->SetTrainingCut(string(cutCentral && cutBarrel)); 
+    m_trainerEB->SetTrainingCut(string(cutCentral && cutBarrel));
     m_trainerEBVar->SetTrainingCut(string(cutVariation && cutBarrel));
-    m_trainerEE->SetTrainingCut(string(cutCentral && cutEndcap)); 
+    m_trainerEE->SetTrainingCut(string(cutCentral && cutEndcap));
     m_trainerEEVar->SetTrainingCut(string(cutVariation && cutEndcap));
-    m_trainerComb->SetTrainingCut(string(cutCombination)); 
+    m_trainerComb->SetTrainingCut(string(cutCombination));
     // loop over options
     vector<string> optionTokens;
     tokenize(options, optionTokens, ":");

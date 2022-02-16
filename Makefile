@@ -18,7 +18,7 @@ INCLUDE_DIR =include
 DICT_DIR = dict
 
 SOURCES := $(wildcard $(SRC_DIR)/*.cc $(LIBSRC_DIR)/*.cc )
-#SOURCES := $(wildcard $(LIBSRC_DIR)/*.cc) 
+#SOURCES := $(wildcard $(LIBSRC_DIR)/*.cc)
 
 #the output directories
 LIB_DIR = libs/$(BFARCH)
@@ -81,7 +81,7 @@ CXXFLAGS      = -fPIC -Wall -O3 -fopenmp -Werror -Wfatal-errors
 
 endif
 LD            = g++
-#LDFLAGS       = -O2 
+#LDFLAGS       = -O2
 LDFLAGS       = ${CXXFLAGS}
 SOFLAGS       = -shared
 endif
@@ -90,7 +90,7 @@ endif
 ROOTCFLAGS   := $(shell root-config --cflags) -I$(ROOFITSYS)/include
 ROOTCFLAGS   += -I$(ROOFITSYS)/include
 #ROOTLIBS     := $(shell root-config --libs) -lDCache -L/raid/expt-sw/SL4/cms/slc4_ia32_gcc345/external/dcap/1.2.35-CMS3/lib/ -ldcap
-ROOTLIBS     := $(shell root-config --libs) -lDCache 
+ROOTLIBS     := $(shell root-config --libs) -lDCache
 ROOTLIBS     += -L$(ROOFITSYS)/lib -lRooFitCore -lRooFit -lRooStats -lFoam -lMinuit -lTMVA
 
 
@@ -98,7 +98,7 @@ ROOTLIBS     += -L$(ROOFITSYS)/lib -lRooFitCore -lRooFit -lRooStats -lFoam -lMin
 #on files in the dcache pool
 #so if the lib location isnt specified or doesnt exist, then its okay
 ifeq ($(shell test -d $(DCAP_LIB_DIR) && echo true),true)
-ROOTLIBS     += -L$(DCAP_LIB_DIR) -ldcap 
+ROOTLIBS     += -L$(DCAP_LIB_DIR) -ldcap
 endif
 
 
@@ -108,11 +108,11 @@ ROOTGLIBS    := $(shell root-config --glibs)
 CMSSWFLAGS    = -I$(CMSSW_BASE)/src -I$(CMSSW_RELEASE_BASE)/src
 CMSSWLIBS     = -L${CMSSW_BASE}/lib/${SCRAM_ARCH} -L${CMSSW_RELEASE_BASE}/lib/${SCRAM_ARCH} -lCondFormatsEgammaObjects
 
-#we dont know exactly where the boost directory is for CMSSW, we just pick the 
+#we dont know exactly where the boost directory is for CMSSW, we just pick the
 #the first one in the directory, dont think this will matter
 BOOST_DIR     = $(shell ls $$CMSSW_DATA_PATH/../external/boost/* -d  | head -n 1)
 
-CXXFLAGS     += $(ROOTCFLAGS) -I$(INCLUDE_DIR) $(CMSSWFLAGS)  -fexceptions  -I$(BOOST_DIR)/include -I/cvmfs/cms.cern.ch/slc6_amd64_gcc700/cms/vdt/0.4.0/include/
+CXXFLAGS     += $(ROOTCFLAGS) -I$(INCLUDE_DIR) $(CMSSWFLAGS)  -fexceptions  -I$(BOOST_DIR)/include -I/cvmfs/cms.cern.ch/${SCRAM_ARCH}/cms/vdt/0.4.0/include/
 
 
 
@@ -124,7 +124,7 @@ LDFLAGS      += $(shell root-config --nonew ) -fno-exceptions
 #if the file doesnt exist, we will ignore it, and often the file may not exist
 
 #naughty, remove this asap
-#CXXFLAGS	+= -I/home/sharper/lhapdfInstall/include 
+#CXXFLAGS	+= -I/home/sharper/lhapdfInstall/include
 #LIBS 		+= -L/home/sharper/lhapdfInstall/lib -lLHAPDF
 
 
@@ -143,10 +143,10 @@ clean:		clean.tmp clean.dict
 		rm -rf $(BIN_DIR) $(LIB_DIR) $(OBJ_DIR)
 
 
-clean.tmp: 
+clean.tmp:
 		rm -f *~ $(SRC_DIR)/*~ $(LIBSRC_DIR)/*~ $(INCLUDE_DIR)/*~ $(DICT_DIR)/*~
 
-clean.dict:	
+clean.dict:
 		rm -rf $(DICT_DIR)/*
 
 #$(LIB_DIR)/lib%.so:
@@ -157,7 +157,7 @@ clean.dict:
 $(OBJ_DIR)/%Dict.o:%Dict.cc
 #right I want make to rerun the dictionary defination if it needs to
 #this next bit solely sorts out the dependences
-#yes I know it looks like somebody mashed the keyboard 
+#yes I know it looks like somebody mashed the keyboard
 
 #after much puzzling over this, I figured out what Past Sam was trying to do
 #make the rule as normal for the Dict.o and then remake the rule with Dict.cc so Make sees that it doesnt need to be updated
@@ -203,7 +203,7 @@ $(OBJ_DIR)/%.o: %.cc
 
 
 %Dict.cc:  # %_LinkDef.h
-#	@echo "first dict $@" 
+#	@echo "first dict $@"
 #so I needed to put this in dict/PACKAGENAME/src, seemed path of least resistance
 	@test -d dict/$(PACKAGENAME)/src || mkdir -p dict/$(PACKAGENAME)/src
 #now I allow ".h" or ".hh" hence the wild card
@@ -222,8 +222,8 @@ $(OBJ_DIR)/%.o: %.cc
 
 
 
-%Exe:$(OBJ_DIR)/%.o $(STD_LIBS) 
-	$(LD) $(LDFLAGS) $< $(LIBS) $(STD_LIBS) -o $(BIN_DIR)/$@	
+%Exe:$(OBJ_DIR)/%.o $(STD_LIBS)
+	$(LD) $(LDFLAGS) $< $(LIBS) $(STD_LIBS) -o $(BIN_DIR)/$@
 
 -include $(DEPENDFILES)
 # DO NOT DELETE

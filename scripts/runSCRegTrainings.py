@@ -2,10 +2,10 @@
 
 import subprocess
 import os
-try:
-    from regtools import RegArgs
-except ImportError:
-    raise ImportError('module regtools not found, please add "python" to PYTHON27PATH or PYTHONPATH as appropriate eg\n  export PYTHON27PATH=$PYTHON27PATH:python\nand try again')
+import sys
+
+sys.path.insert(1, 'python')
+from regtools import RegArgs
 import time
 import argparse
 def main():
@@ -21,8 +21,8 @@ def main():
     #step 2, apply the mean to the real IC sample and save the result in a tree
     #step 3, retrain the resolution for the real IC on the corrected energy
     run_step1 = True
-    run_step2 = False
-    run_step3 = False
+    run_step2 = True
+    run_step3 = True
 
     #setup the selection (event number cuts come later)
     cuts_name = "stdCuts"
@@ -31,18 +31,14 @@ def main():
     #prefixes all the regressions produced
     if args.era=='2021Run3':
         base_reg_name = "2021Run3"
-	input_ideal_ic  = "{}/DoubleElectron_FlatPt-1To500_FlatPU0to70IDEALGT_120X_mcRun3_2021_realistic_v6_ECALIdealIC-v2_AODSIM.root".format(args.input_dir)
+        input_ideal_ic  = "{}/DoubleElectron_FlatPt-1To500_FlatPU0to70IDEALGT_120X_mcRun3_2021_realistic_v6_ECALIdealIC-v2_AODSIM.root".format(args.input_dir)
         input_real_ic  = "{}/DoubleElectron_FlatPt-1To500_FlatPU0to70_120X_mcRun3_2021_realistic_v6-v1_AODSIM.root".format(args.input_dir)
         ideal_eventnr_cut = "evt.eventnr%5==0"
         real_eventnr_cut = "evt.eventnr%5==1"
     elif args.era=='Run3':
         base_reg_name = "Run3HLT"
-        # input_ideal_ic  = "{}/HLTAnalyzerTree_IDEAL.root".format(args.input_dir)
-        # input_real_ic = "{}/HLTAnalyzerTree_REAL.root".format(args.input_dir)
-
-        input_ideal_ic  = "{}/ideal.root".format(args.input_dir)
-        input_real_ic = "{}/real.root".format(args.input_dir)
-
+        input_ideal_ic  = "{}/HLTAnalyzerTree_IDEAL.root".format(args.input_dir)
+        input_real_ic = "{}/HLTAnalyzerTree_REAL.root".format(args.input_dir)
         ideal_eventnr_cut = "(1)"  #4million electrons (we determined 4 million was optimal but after the 2017 was done)
         real_eventnr_cut = "(1)" #4million electrons (we determined 4 million was optimal but after the 2017 was done)
     else:
@@ -61,7 +57,7 @@ def main():
     regArgs.cuts_base = base_ele_cuts.format(extra_cuts = ideal_eventnr_cut)
     regArgs.ntrees = 1500
 
-    print """about to run the supercluster regression with:
+    print ("""about to run the supercluster regression with:
     name: {name}
     ideal ic input: {ideal_ic}
     real ic input: {real_ic}
@@ -69,7 +65,7 @@ def main():
 steps to be run:
     step 1: ideal training for mean       = {step1}
     step 2: apply ideal training to real  = {step2}
-    step 3: real training for sigma       = {step3}""".format(name=base_reg_name,ideal_ic=input_ideal_ic,real_ic=input_real_ic,out_dir=args.output_dir,step1=run_step1,step2=run_step2,step3=run_step3)
+    step 3: real training for sigma       = {step3}""".format(name=base_reg_name,ideal_ic=input_ideal_ic,real_ic=input_real_ic,out_dir=args.output_dir,step1=run_step1,step2=run_step2,step3=run_step3))
     time.sleep(20)
 
     if not os.path.exists(args.output_dir):
@@ -87,7 +83,8 @@ steps to be run:
     input_for_input_for_res_training = str(input_real_ic)
 
     # Set scram arch
-    arch = "slc7_amd64_gcc700"
+    arch = os.getenv('SCRAM_ARCH')
+
     if run_step2: subprocess.Popen(["bin/"+arch+"/RegressionApplierExe",input_for_input_for_res_training,input_for_res_training,"--gbrForestFileEE",forest_ee_file,"--gbrForestFileEB",forest_eb_file,"--nrThreads","4","--treeName",regArgs.tree_name,"--writeFullTree","1","--regOutTag","Ideal"]).communicate()
 
     regArgs.base_name = "{}_RealIC_RealTraining".format(base_reg_name)

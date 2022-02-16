@@ -1,6 +1,6 @@
 /**
  *  @file  HybridGBRMaker.cpp
- *  @brief  
+ *  @brief
  *
  *
  *  @author  Jean-Baptiste Sauvan <sauvan@llr.in2p3.fr>
@@ -38,7 +38,7 @@
 #include "GBRLikelihood/RooHybridBDTAutoPdf.h"
 #include "GBRLikelihood/RooDoubleCBFast.h"
 #include "GBRLikelihood/HybridGBRForestFlex.h"
-#include "CondFormats/EgammaObjects/interface/GBRForestD.h"
+#include "CondFormats/GBRForest/interface/GBRForestD.h"
 
 #include <iostream>
 #include <sstream>
@@ -101,24 +101,24 @@ void HybridGBRMaker::close()
     //for(unsigned int i=0;i<m_trees.size();i++)
     //{
     //    //TTree* tree = m_trees[i];
-    //    //if(tree) 
+    //    //if(tree)
     //    //{
     //    //    tree->Delete();
     //    //    tree = NULL;
     //    //}
     //}
     //m_trees.clear();
-    //if(m_trainerEB) 
+    //if(m_trainerEB)
     //{
         //delete m_trainerEB;
         //m_trainerEB = NULL;
     //}
-    //if(m_trainerEE) 
+    //if(m_trainerEE)
     //{
         //delete m_trainerEE;
         //m_trainerEE = NULL;
     //}
-    if(m_trainerComb) 
+    if(m_trainerComb)
     {
         delete m_trainerComb;
         m_trainerComb = NULL;
@@ -180,8 +180,8 @@ bool HybridGBRMaker::init(const string& name,
         m_tree->Add(it->c_str());
         m_trees.push_back(tree);
     }
-    
-    // open output file 
+
+    // open output file
     stringstream outFileName;
     outFileName  <<  outputDirectory  <<  "/"  <<  name  <<  "_results.root";
     m_fileOutName = outFileName.str();
@@ -313,7 +313,7 @@ void HybridGBRMaker::runEB(const string& cutBase, const string& cutEB, const str
         }
     }
 
-    //RooRealVar for event weight 
+    //RooRealVar for event weight
     TCut weight(m_weight.c_str());
     RooRealVar weightvarEB("weightvar","",1.);
 
@@ -330,20 +330,20 @@ void HybridGBRMaker::runEB(const string& cutBase, const string& cutEB, const str
 
 
     //create RooDataSet from TChain
-    RooDataSet *hdataEB = RooTreeConvert::CreateDataSet("hdataEB", m_tree, varsEB, weightvarEB);   
+    RooDataSet *hdataEB = RooTreeConvert::CreateDataSet("hdataEB", m_tree, varsEB, weightvarEB);
 
     //RooRealVars corresponding to regressed parameters (sigma, mean, left tail parameter, right tail parameter)
     RooRealVar sigwidthtvarEB("sigwidthtvarEB","",0.01);
     sigwidthtvarEB.setConstant(false);
 
     RooRealVar sigmeantvarEB("sigmeantvarEB","",1.);
-    sigmeantvarEB.setConstant(false); 
-    
+    sigmeantvarEB.setConstant(false);
+
     RooRealVar signvarEB("signvarEB","",3.);
-    signvarEB.setConstant(false);       
+    signvarEB.setConstant(false);
 
     RooRealVar sign2varEB("sign2varEB","",3.);
-    sign2varEB.setConstant(false);     
+    sign2varEB.setConstant(false);
 
     //define non-parametric functions for each regressed parameter
     RooGBRFunctionFlex *sigwidthtfuncEB = new RooGBRFunctionFlex("sigwidthtfuncEB","");
@@ -356,13 +356,13 @@ void HybridGBRMaker::runEB(const string& cutBase, const string& cutEB, const str
     //RooGBRFunctionFlex sign2funcEB("sign2funcEB","");
 
     //define mapping of input variables to non-parametric functions (in this case trivial since all 4 functions depend on the same inputs, but this is not a requirement)
-    RooGBRTargetFlex *sigwidthtEB = new RooGBRTargetFlex("sigwidthtEB","",*sigwidthtfuncEB,sigwidthtvarEB,condvarsEB);  
-    RooGBRTargetFlex *sigmeantEB = new RooGBRTargetFlex("sigmeantEB","",*sigmeantfuncEB,sigmeantvarEB,condvarsEB);  
-    RooGBRTargetFlex *signtEB = new RooGBRTargetFlex("signtEB","",*signfuncEB,signvarEB,condvarsEB);  
-    RooGBRTargetFlex *sign2tEB = new RooGBRTargetFlex("sign2tEB","",*sign2funcEB,sign2varEB,condvarsEB);  
-    //RooGBRTargetFlex sigwidthtEB("sigwidthtEB","",sigwidthtfuncEB,sigwidthtvarEB,condvarsEB);  
-    //RooGBRTargetFlex sigmeantEB("sigmeantEB","",sigmeantfuncEB,sigmeantvarEB,condvarsEB);  
-    //RooGBRTargetFlex signtEB("signtEB","",signfuncEB,signvarEB,condvarsEB);  
+    RooGBRTargetFlex *sigwidthtEB = new RooGBRTargetFlex("sigwidthtEB","",*sigwidthtfuncEB,sigwidthtvarEB,condvarsEB);
+    RooGBRTargetFlex *sigmeantEB = new RooGBRTargetFlex("sigmeantEB","",*sigmeantfuncEB,sigmeantvarEB,condvarsEB);
+    RooGBRTargetFlex *signtEB = new RooGBRTargetFlex("signtEB","",*signfuncEB,signvarEB,condvarsEB);
+    RooGBRTargetFlex *sign2tEB = new RooGBRTargetFlex("sign2tEB","",*sign2funcEB,sign2varEB,condvarsEB);
+    //RooGBRTargetFlex sigwidthtEB("sigwidthtEB","",sigwidthtfuncEB,sigwidthtvarEB,condvarsEB);
+    //RooGBRTargetFlex sigmeantEB("sigmeantEB","",sigmeantfuncEB,sigmeantvarEB,condvarsEB);
+    //RooGBRTargetFlex signtEB("signtEB","",signfuncEB,signvarEB,condvarsEB);
     //RooGBRTargetFlex sign2tEB("sign2tEB","",sign2funcEB,sign2varEB,condvarsEB);
 
     //define list of mapped functions to regress
@@ -370,27 +370,27 @@ void HybridGBRMaker::runEB(const string& cutBase, const string& cutEB, const str
     tgtsEB.add(*sigwidthtEB);
     if(!m_fixedMean) tgtsEB.add(*sigmeantEB);
     tgtsEB.add(*signtEB);
-    tgtsEB.add(*sign2tEB);  
+    tgtsEB.add(*sign2tEB);
 
-    //define transformations corresponding to parameter bounds for non-parametric outputs  
+    //define transformations corresponding to parameter bounds for non-parametric outputs
     RooRealConstraint sigwidthlimEB("sigwidthlimEB","",*sigwidthtEB,0.0002,0.5);
-    
+
     // THOMAS: 0.2 to 2.0 is probably to restrictive - use -1.0 to 3.0 instead
     // RooRealConstraint sigmeanlimEB("sigmeanlimEB","",*sigmeantEB,0.2,2.0);
     RooRealConstraint sigmeanlimEB("sigmeanlimEB","",*sigmeantEB,m_meanMin,m_meanMax);
 
-    RooRealConstraint signlimEB("signlimEB","",*signtEB,1.01,5000.); 
-    RooRealConstraint sign2limEB("sign2limEB","",*sign2tEB,1.01,5000.); 
+    RooRealConstraint signlimEB("signlimEB","",*signtEB,1.01,5000.);
+    RooRealConstraint sign2limEB("sign2limEB","",*sign2tEB,1.01,5000.);
 
     //define pdf, which depends on transformed outputs (and is intended to be treated as a conditional pdf over the
     //regression inputs in this case)
     //The actual pdf below is a double crystal ball, with crossover points alpha_1 and alpha_2 set constant, but all other
     //parameters regressed
-    RooDoubleCBFast sigpdfEB = m_fixedMean ? RooDoubleCBFast("sigpdfEB","",*targetvar,RooConst(1.),sigwidthlimEB,RooConst(2.),signlimEB,RooConst(1.),sign2limEB) : 
+    RooDoubleCBFast sigpdfEB = m_fixedMean ? RooDoubleCBFast("sigpdfEB","",*targetvar,RooConst(1.),sigwidthlimEB,RooConst(2.),signlimEB,RooConst(1.),sign2limEB) :
       RooDoubleCBFast("sigpdfEB","",*targetvar,sigmeanlimEB,sigwidthlimEB,RooConst(2.),signlimEB,RooConst(1.),sign2limEB);
 
     //dummy variable
-    RooConstVar etermconst("etermconst","",0.);  
+    RooConstVar etermconst("etermconst","",0.);
 
     //dummy variable
     RooRealVar r("r","",1.);
@@ -398,7 +398,7 @@ void HybridGBRMaker::runEB(const string& cutBase, const string& cutEB, const str
 
     //define list of pdfs
     std::vector<RooAbsReal*> vpdfEB;
-    vpdfEB.push_back(&sigpdfEB);  
+    vpdfEB.push_back(&sigpdfEB);
 
     //define list of training datasets
     std::vector<RooAbsData*> vdataEB;
@@ -408,7 +408,7 @@ void HybridGBRMaker::runEB(const string& cutBase, const string& cutEB, const str
 
 
     // set cut for training events
-    //m_trainerComb->SetTrainingCut(string(cutCombination)); 
+    //m_trainerComb->SetTrainingCut(string(cutCombination));
     // loop over options
     for(const auto& token : optionTokens)
     {
@@ -505,7 +505,7 @@ void HybridGBRMaker::runEB(const string& cutBase, const string& cutEB, const str
     fileOut->Close();
 
     // write workspace
-    weregEB.writeToFile(m_fileOutName.c_str(), false);    
+    weregEB.writeToFile(m_fileOutName.c_str(), false);
 
 
     //if(m_doCombine)
@@ -579,7 +579,7 @@ void HybridGBRMaker::runEE(const string& cutBase, const string& cutEE, const str
         }
     }
 
-    //RooRealVar for event weight 
+    //RooRealVar for event weight
     TCut weight(m_weight.c_str());
     RooRealVar weightvarEE("weightvar","",1.);
 
@@ -593,20 +593,20 @@ void HybridGBRMaker::runEE(const string& cutBase, const string& cutEE, const str
 
 
     //create RooDataSet from TChain
-    RooDataSet *hdataEE = RooTreeConvert::CreateDataSet("hdataEE", m_tree, varsEE, weightvarEE);   
+    RooDataSet *hdataEE = RooTreeConvert::CreateDataSet("hdataEE", m_tree, varsEE, weightvarEE);
 
     //RooRealVars corresponding to regressed parameters (sigma, mean, left tail parameter, right tail parameter)
     RooRealVar sigwidthtvarEE("sigwidthtvarEE","",0.01);
     sigwidthtvarEE.setConstant(false);
 
     RooRealVar sigmeantvarEE("sigmeantvarEE","",1.);
-    sigmeantvarEE.setConstant(false); 
+    sigmeantvarEE.setConstant(false);
 
     RooRealVar signvarEE("signvarEE","",3.);
-    signvarEE.setConstant(false);       
+    signvarEE.setConstant(false);
 
     RooRealVar sign2varEE("sign2varEE","",3.);
-    sign2varEE.setConstant(false);     
+    sign2varEE.setConstant(false);
 
     //define non-parametric functions for each regressed parameter
     RooGBRFunctionFlex *sigwidthtfuncEE = new RooGBRFunctionFlex("sigwidthtfuncEE","");
@@ -619,13 +619,13 @@ void HybridGBRMaker::runEE(const string& cutBase, const string& cutEE, const str
     //RooGBRFunctionFlex sign2funcEB("sign2funcEB","");
 
     //define mapping of input variables to non-parametric functions (in this case trivial since all 4 functions depend on the same inputs, but this is not a requirement)
-    RooGBRTargetFlex *sigwidthtEE = new RooGBRTargetFlex("sigwidthtEE","",*sigwidthtfuncEE,sigwidthtvarEE,condvarsEE);  
-    RooGBRTargetFlex *sigmeantEE = new RooGBRTargetFlex("sigmeantEE","",*sigmeantfuncEE,sigmeantvarEE,condvarsEE);  
-    RooGBRTargetFlex *signtEE = new RooGBRTargetFlex("signtEE","",*signfuncEE,signvarEE,condvarsEE);  
-    RooGBRTargetFlex *sign2tEE = new RooGBRTargetFlex("sign2tEE","",*sign2funcEE,sign2varEE,condvarsEE);  
-    //RooGBRTargetFlex sigwidthtEB("sigwidthtEB","",sigwidthtfuncEB,sigwidthtvarEB,condvarsEB);  
-    //RooGBRTargetFlex sigmeantEB("sigmeantEB","",sigmeantfuncEB,sigmeantvarEB,condvarsEB);  
-    //RooGBRTargetFlex signtEB("signtEB","",signfuncEB,signvarEB,condvarsEB);  
+    RooGBRTargetFlex *sigwidthtEE = new RooGBRTargetFlex("sigwidthtEE","",*sigwidthtfuncEE,sigwidthtvarEE,condvarsEE);
+    RooGBRTargetFlex *sigmeantEE = new RooGBRTargetFlex("sigmeantEE","",*sigmeantfuncEE,sigmeantvarEE,condvarsEE);
+    RooGBRTargetFlex *signtEE = new RooGBRTargetFlex("signtEE","",*signfuncEE,signvarEE,condvarsEE);
+    RooGBRTargetFlex *sign2tEE = new RooGBRTargetFlex("sign2tEE","",*sign2funcEE,sign2varEE,condvarsEE);
+    //RooGBRTargetFlex sigwidthtEB("sigwidthtEB","",sigwidthtfuncEB,sigwidthtvarEB,condvarsEB);
+    //RooGBRTargetFlex sigmeantEB("sigmeantEB","",sigmeantfuncEB,sigmeantvarEB,condvarsEB);
+    //RooGBRTargetFlex signtEB("signtEB","",signfuncEB,signvarEB,condvarsEB);
     //RooGBRTargetFlex sign2tEB("sign2tEB","",sign2funcEB,sign2varEB,condvarsEB);
 
     //define list of mapped functions to regress
@@ -633,13 +633,13 @@ void HybridGBRMaker::runEE(const string& cutBase, const string& cutEE, const str
     tgtsEE.add(*sigwidthtEE);
     if(!m_fixedMean) tgtsEE.add(*sigmeantEE);
     tgtsEE.add(*signtEE);
-    tgtsEE.add(*sign2tEE);  
+    tgtsEE.add(*sign2tEE);
 
-    //define transformations corresponding to parameter bounds for non-parametric outputs  
+    //define transformations corresponding to parameter bounds for non-parametric outputs
     RooRealConstraint sigwidthlimEE("sigwidthlimEE","",*sigwidthtEE,0.0002,0.5);
     RooRealConstraint sigmeanlimEE("sigmeanlimEE","",*sigmeantEE,m_meanMin,m_meanMax); // THOMAS: Up from 0.2 to 2.0
-    RooRealConstraint signlimEE("signlimEE","",*signtEE,1.01,5000.); 
-    RooRealConstraint sign2limEE("sign2limEE","",*sign2tEE,1.01,5000.); 
+    RooRealConstraint signlimEE("signlimEE","",*signtEE,1.01,5000.);
+    RooRealConstraint sign2limEE("sign2limEE","",*sign2tEE,1.01,5000.);
 
     //define pdf, which depends on transformed outputs (and is intended to be treated as a conditional pdf over the
     //regression inputs in this case)
@@ -650,7 +650,7 @@ void HybridGBRMaker::runEE(const string& cutBase, const string& cutEE, const str
       RooDoubleCBFast("sigpdfEE","",*targetvar,sigmeanlimEE,sigwidthlimEE,RooConst(2.),signlimEE,RooConst(1.),sign2limEE);
 
     //dummy variable
-    RooConstVar etermconst("etermconst","",0.);  
+    RooConstVar etermconst("etermconst","",0.);
 
     //dummy variable
     RooRealVar r("r","",1.);
@@ -658,7 +658,7 @@ void HybridGBRMaker::runEE(const string& cutBase, const string& cutEE, const str
 
     //define list of pdfs
     std::vector<RooAbsReal*> vpdfEE;
-    vpdfEE.push_back(&sigpdfEE);  
+    vpdfEE.push_back(&sigpdfEE);
 
     //define list of training datasets
     std::vector<RooAbsData*> vdataEE;
@@ -668,7 +668,7 @@ void HybridGBRMaker::runEE(const string& cutBase, const string& cutEE, const str
 
 
     // set cut for training events
-    //m_trainerComb->SetTrainingCut(string(cutCombination)); 
+    //m_trainerComb->SetTrainingCut(string(cutCombination));
     // loop over options
     for(const auto& token : optionTokens)
     {
@@ -757,7 +757,7 @@ void HybridGBRMaker::runEE(const string& cutBase, const string& cutEE, const str
     fileOut->WriteObject(&m_target,"targetEE");
     fileOut->Close();
 
-    weregEE.writeToFile(m_fileOutName.c_str(), false);    
+    weregEE.writeToFile(m_fileOutName.c_str(), false);
 
 }
 
@@ -768,7 +768,7 @@ void HybridGBRMaker::runComb(const string& cutComb, const string& options)
     TCut cutCombination(cutComb.c_str());
     cout << "INFO: Cuts for combination training    = '" << string(cutCombination) << "'\n";
     // set cut for training events
-    m_trainerComb->SetTrainingCut(string(cutCombination)); 
+    m_trainerComb->SetTrainingCut(string(cutCombination));
     // loop over options
     vector<string> optionTokens;
     tokenize(options, optionTokens, ":");

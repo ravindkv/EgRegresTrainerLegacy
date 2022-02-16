@@ -1,7 +1,7 @@
 #include "RegresTrainer/GBRApply.h"
 #include "RegresTrainer/GBREvent.h"
-#include "CondFormats/EgammaObjects/interface/GBRForest.h"
-#include "CondFormats/EgammaObjects/interface/GBRForestD.h"
+#include "CondFormats/GBRForest/interface/GBRForest.h"
+#include "CondFormats/GBRForest/interface/GBRForestD.h"
 #include "RegresTrainer/ICorrection.h"
 
 
@@ -19,7 +19,7 @@ GBRApply::GBRApply()
 }
 
 //_______________________________________________________________________
-GBRApply::~GBRApply() 
+GBRApply::~GBRApply()
 {
 
 }
@@ -27,46 +27,46 @@ GBRApply::~GBRApply()
 //_______________________________________________________________________
 //TTree *GBRApply::ApplyAsFriend(TTree *intree, const GBRForest *forest, const std::vector<std::string> &vars, std::string targetname) const
 //{
-//  
+//
 //  int nvars = vars.size();
-//  
+//
 //  //initialize TTreeFormulas to read variables from TTree
 //  std::vector<TTreeFormula*> inputforms;
-//  for (std::vector<std::string>::const_iterator it = vars.begin(); 
+//  for (std::vector<std::string>::const_iterator it = vars.begin();
 //      it != vars.end(); ++it) {
 //    inputforms.push_back(new TTreeFormula(it->c_str(),it->c_str(),intree));
 //  }
-//  
+//
 //  Float_t target = 0.;
 //  Float_t *vals = new Float_t[nvars];
-//  
+//
 //  //initialize new friend tree
 //  TTree *friendtree = new TTree;
 //  friendtree->Branch(targetname.c_str(),&target,TString::Format("%s/F",targetname.c_str()));
-//  
+//
 //  for (Long64_t iev=0; iev<intree->GetEntries(); ++iev) {
 //    //if (iev%100000==0) printf("%i\n",int(iev));
 //    intree->LoadTree(iev);
-//        
+//
 //    for (int i=0; i<nvars; ++i) {
 //      vals[i] = inputforms[i]->EvalInstance();
 //    }
-//    
+//
 //    target = forest->GetResponse(vals);
-//    
+//
 //    friendtree->Fill();
 //
 //  }
-//  
-//  
+//
+//
 //  //clear TTreeFormulas
-//  for (std::vector<TTreeFormula*>::const_iterator it = inputforms.begin(); 
+//  for (std::vector<TTreeFormula*>::const_iterator it = inputforms.begin();
 //        it != inputforms.end(); ++it) {
 //      delete *it;
 //  }
-//  
+//
 //  delete[] vals;
-//  
+//
 //  intree->AddFriend(friendtree);
 //
 //  //the branch addresses are set to local variables in this function
@@ -74,11 +74,11 @@ GBRApply::~GBRApply()
 //  //so we need to reset the branch addresses before returning
 //  friendtree->ResetBranchAddresses();
 //  return friendtree;
-//  
+//
 //}
 
 //_______________________________________________________________________
-TTree *GBRApply::ApplyAsFriend(TTree *intree, 
+TTree *GBRApply::ApplyAsFriend(TTree *intree,
         const GBRForest *forestEB, const GBRForest *forestEE,
         const std::vector<std::string> &varsEB, const std::vector<std::string> &varsEE,
         const std::string& cutEB, const std::string& cutEE,
@@ -96,11 +96,11 @@ TTree *GBRApply::ApplyAsFriend(TTree *intree,
     //initialize TTreeFormulas to read variables from TTree
     std::vector<TTreeFormula*> inputformsEB;
     std::vector<TTreeFormula*> inputformsEE;
-    for (std::vector<std::string>::const_iterator it = varsEB.begin(); 
+    for (std::vector<std::string>::const_iterator it = varsEB.begin();
             it != varsEB.end(); ++it) {
         inputformsEB.push_back(new TTreeFormula(it->c_str(),it->c_str(),intree));
     }
-    for (std::vector<std::string>::const_iterator it = varsEE.begin(); 
+    for (std::vector<std::string>::const_iterator it = varsEE.begin();
             it != varsEE.end(); ++it) {
         inputformsEE.push_back(new TTreeFormula(it->c_str(),it->c_str(),intree));
     }
@@ -135,7 +135,7 @@ TTree *GBRApply::ApplyAsFriend(TTree *intree,
             std::cout << "ERROR: GBRApply: not isEB nor isEE in event \n" << iev ;
         else if(isEB && isEE)
             std::cout << "ERROR: GBRApply: isEB and isEE in event \n" << iev ;
-        
+
         if(isEB)
         {
             for (int i=0; i<nvarsEB; ++i) {
@@ -168,15 +168,15 @@ TTree *GBRApply::ApplyAsFriend(TTree *intree,
 
 
     //clear TTreeFormulas
-    for (std::vector<TTreeFormula*>::const_iterator it = inputformsEB.begin(); 
+    for (std::vector<TTreeFormula*>::const_iterator it = inputformsEB.begin();
             it != inputformsEB.end(); ++it) {
         delete *it;
     }
-    for (std::vector<TTreeFormula*>::const_iterator it = inputformsEE.begin(); 
+    for (std::vector<TTreeFormula*>::const_iterator it = inputformsEE.begin();
             it != inputformsEE.end(); ++it) {
         delete *it;
     }
-    for (std::vector<TTreeFormula*>::const_iterator it = inputformsCorr.begin(); 
+    for (std::vector<TTreeFormula*>::const_iterator it = inputformsCorr.begin();
             it != inputformsCorr.end(); ++it) {
         delete *it;
     }
@@ -195,7 +195,7 @@ TTree *GBRApply::ApplyAsFriend(TTree *intree,
 }
 
 // //_______________________________________________________________________
-// TTree *GBRApply::ApplyAsFriendTransform(TTree *intree, 
+// TTree *GBRApply::ApplyAsFriendTransform(TTree *intree,
 //         const GBRForestD *forestEB, const GBRForestD *forestEE,
 //         const std::vector<std::string> &varsEB, const std::vector<std::string> &varsEE,
 //         const std::string& cutEB, const std::string& cutEE,
@@ -222,11 +222,11 @@ TTree *GBRApply::ApplyAsFriend(TTree *intree,
 //     //initialize TTreeFormulas to read variables from TTree
 //     std::vector<TTreeFormula*> inputformsEB;
 //     std::vector<TTreeFormula*> inputformsEE;
-//     for (std::vector<std::string>::const_iterator it = varsEB.begin(); 
+//     for (std::vector<std::string>::const_iterator it = varsEB.begin();
 //             it != varsEB.end(); ++it) {
 //         inputformsEB.push_back(new TTreeFormula(it->c_str(),it->c_str(),intree));
 //     }
-//     for (std::vector<std::string>::const_iterator it = varsEE.begin(); 
+//     for (std::vector<std::string>::const_iterator it = varsEE.begin();
 //             it != varsEE.end(); ++it) {
 //         inputformsEE.push_back(new TTreeFormula(it->c_str(),it->c_str(),intree));
 //     }
@@ -250,7 +250,7 @@ TTree *GBRApply::ApplyAsFriend(TTree *intree,
 //             std::cout << "ERROR: GBRApply: not isEB nor isEE\n";
 //         else if(isEB && isEE)
 //             std::cout << "ERROR: GBRApply: isEB and isEE\n";
-        
+
 //         if(isEB)
 //         {
 //             for (int i=0; i<nvarsEB; ++i) {
@@ -274,11 +274,11 @@ TTree *GBRApply::ApplyAsFriend(TTree *intree,
 
 
 //     //clear TTreeFormulas
-//     for (std::vector<TTreeFormula*>::const_iterator it = inputformsEB.begin(); 
+//     for (std::vector<TTreeFormula*>::const_iterator it = inputformsEB.begin();
 //             it != inputformsEB.end(); ++it) {
 //         delete *it;
 //     }
-//     for (std::vector<TTreeFormula*>::const_iterator it = inputformsEE.begin(); 
+//     for (std::vector<TTreeFormula*>::const_iterator it = inputformsEE.begin();
 //             it != inputformsEE.end(); ++it) {
 //         delete *it;
 //     }
@@ -299,7 +299,7 @@ TTree *GBRApply::ApplyAsFriend(TTree *intree,
 
 
 //_______________________________________________________________________
-TTree *GBRApply::ApplyAsFriendTransform(TTree *intree, 
+TTree *GBRApply::ApplyAsFriendTransform(TTree *intree,
         const GBRForestD *forestEB, const GBRForestD *forestEE,
         const std::vector<std::string> &varsEB, const std::vector<std::string> &varsEE,
         const std::string& cutEB, const std::string& cutEE,
@@ -334,7 +334,7 @@ TTree *GBRApply::ApplyAsFriendTransform(TTree *intree,
         //initialize TTreeFormulas to read variables from TTree
         std::vector<TTreeFormula*> inputformsEB;
 
-        for (std::vector<std::string>::const_iterator it = varsEB.begin(); 
+        for (std::vector<std::string>::const_iterator it = varsEB.begin();
                 it != varsEB.end(); ++it) {
             inputformsEB.push_back(new TTreeFormula(it->c_str(),it->c_str(),intree));
         }
@@ -355,7 +355,7 @@ TTree *GBRApply::ApplyAsFriendTransform(TTree *intree,
             //     std::cout << "ERROR: GBRApply: not isEB nor isEE\n";
             // else if(isEB && isEE)
             //     std::cout << "ERROR: GBRApply: isEB and isEE\n";
-            
+
             if(isEB)
             {
                 for (int i=0; i<nvarsEB; ++i) {
@@ -381,7 +381,7 @@ TTree *GBRApply::ApplyAsFriendTransform(TTree *intree,
 
 
         //clear TTreeFormulas
-        for (std::vector<TTreeFormula*>::const_iterator it = inputformsEB.begin(); 
+        for (std::vector<TTreeFormula*>::const_iterator it = inputformsEB.begin();
                 it != inputformsEB.end(); ++it) {
             delete *it;
         }
@@ -403,7 +403,7 @@ TTree *GBRApply::ApplyAsFriendTransform(TTree *intree,
         TTreeFormula formIsEE(cutEE.c_str(), cutEE.c_str(), intree);
 
         std::vector<TTreeFormula*> inputformsEE;
-        for (std::vector<std::string>::const_iterator it = varsEE.begin(); 
+        for (std::vector<std::string>::const_iterator it = varsEE.begin();
                 it != varsEE.end(); ++it) {
             inputformsEE.push_back(new TTreeFormula(it->c_str(),it->c_str(),intree));
         }
@@ -424,7 +424,7 @@ TTree *GBRApply::ApplyAsFriendTransform(TTree *intree,
             //     std::cout << "ERROR: GBRApply: not isEB nor isEE\n";
             // else if(isEB && isEE)
             //     std::cout << "ERROR: GBRApply: isEB and isEE\n";
-            
+
             // if(isEB)
             // {
             //     for (int i=0; i<nvarsEB; ++i) {
@@ -448,7 +448,7 @@ TTree *GBRApply::ApplyAsFriendTransform(TTree *intree,
             friendtree->Fill();
         }
 
-        for (std::vector<TTreeFormula*>::const_iterator it = inputformsEE.begin(); 
+        for (std::vector<TTreeFormula*>::const_iterator it = inputformsEE.begin();
                 it != inputformsEE.end(); ++it) {
             delete *it;
         }

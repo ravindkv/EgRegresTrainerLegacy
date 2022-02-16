@@ -12,6 +12,7 @@
 #include "TStyle.h"
 #include "RooPlot.h"
 #include "RooHist.h"
+#include "TROOT.h"
 
 
 void ResPlotter::Config::setDefaults()
@@ -40,7 +41,7 @@ void ResPlotter::Config::setDefaults()
   std::vector<std::pair<std::string,std::string> > varsTree2 = {
     {"sc.rawEnergy/mc.energy","raw energy, 102X"},
     {"sc.corrEnergy/mc.energy","74X corr, 102X"},
-    {"ele.ecalEnergy/mc.energy","80X ecal, 102X"}, 
+    {"ele.ecalEnergy/mc.energy","80X ecal, 102X"},
     {"ele.energy/mc.energy","80X ecal-trk, 102X"},
     {"pho.energy/mc.energy","80X pho, 102X"}
   };
@@ -78,7 +79,7 @@ void ResPlotter::makeHists(std::vector<TTree*> trees,const std::string& label,co
 			   const std::string& vsVar1,const std::string& vsVar2,
 			   const std::vector<double>& vsVar1Bins,const std::vector<double>& vsVar2Bins)
 {
-  
+
   if(trees.size()!=cfg_.vars.size()){
     LogErr<<" error trees size "<<trees.size()<<" does not equal vars size "<<cfg_.vars.size()<<std::endl;
     return;
@@ -104,12 +105,12 @@ void ResPlotter::makeHists(std::vector<TTree*> trees,const std::string& label,co
   }
 
   if(cfg_.normalise) normaliseHists();
-  
+
 }
 
-std::vector<std::vector<std::pair<TH2*,std::string> > > 
+std::vector<std::vector<std::pair<TH2*,std::string> > >
 ResPlotter::makeHists(TTree* tree,const std::vector<std::pair<std::string,std::string> >& vars,
-		      const std::string& cuts)const			    
+		      const std::string& cuts)const
 {
 
   std::vector<std::vector<std::pair<TH2*,std::string> > > outHistsVec(vsVar1Bins_.size()-1);
@@ -120,7 +121,7 @@ ResPlotter::makeHists(TTree* tree,const std::vector<std::pair<std::string,std::s
       hist->SetDirectory(0);
       hists.push_back({hist,var.second});
     }
-    
+
   }
   std::string varStr = vsVar1_.name+":"+vsVar2_.name;
   for(auto& var : vars){
@@ -147,14 +148,14 @@ ResPlotter::makeHists(TTree* tree,const std::vector<std::pair<std::string,std::s
 
 void ResPlotter::printFits(const std::vector<int>& histNrs,const std::string& baseOutName)const
 {
-  bool twoComp = histNrs.size()==2;  
+  bool twoComp = histNrs.size()==2;
   if(histNrs.size()!=2 && histNrs.size()!=3){
     LogErr << "Error, number of selected histograms must be either 2 or 3, not "<<histNrs.size()<<std::endl;
     return;
   }
   auto vsVar1Label = HistFuncs::makeLabel("",0.657016,0.30662,0.9098,0.374564);
   auto idealLabel = HistFuncs::makeLabel(label_,0.159106,0.798303,0.41364,0.864361);
-   
+
   for(size_t vsVar1BinNr=0;vsVar1BinNr<histsVec_.size();vsVar1BinNr++){
 
     float fitMin=0;
@@ -165,35 +166,35 @@ void ResPlotter::printFits(const std::vector<int>& histNrs,const std::string& ba
       fitMax = cfg_.fitMax;
     }else{
       fitMin = cfg_.fitMinHigh;
-      fitMax = cfg_.fitMaxHigh;     
+      fitMax = cfg_.fitMaxHigh;
     }
 
     std::ostringstream vsVar1LabelStr;
     vsVar1LabelStr <<vsVar1Bins_[vsVar1BinNr]<<" < "<<vsVar1_.plotname<<" < "<<vsVar1Bins_[vsVar1BinNr+1];
     if(!vsVar1_.unit.empty()) vsVar1LabelStr<<" "<<vsVar1_.unit<<std::endl;
     vsVar1Label->SetLabel(vsVar1LabelStr.str().c_str());
-    
+
     std::string nameSuffix = vsVar1_.filename+"BinNr"+std::to_string(vsVar1BinNr)+"_"+vsVar1_.filename+""+AnaFuncs::convertToTTreeStr(vsVar1Bins_[vsVar1BinNr])+"To"+AnaFuncs::convertToTTreeStr(vsVar1Bins_[vsVar1BinNr+1]);
     std::string outName = baseOutName+"_"+nameSuffix;
     std::string outNameMean = baseOutName+"Mean_"+nameSuffix;
     std::string outNameSigma = baseOutName+"Sigma_"+nameSuffix;
-    
-    
+
+
     auto hists = histsVec_[vsVar1BinNr];
-  
+
     //now do all the fits
     std::vector<ResFitter::ParamsVsVar> fitParams;
     for(int histNr : histNrs){
       std::pair<TH2*,std::string>& histPair = hists[histNr];
       fitParams.push_back(resFitter_.makeFitVsVar(histPair.first,fitMin,fitMax,histPair.second));
     }
-  
+
     //now we plot the fit params vs the variable of interets
     auto graphSigma = plotFitParamsVsVarComp(fitParams,ResFitter::ValType::Sigma,cfg_.divideMeanBySigma);
     if(twoComp) formatTwoComp(graphSigma,vsVar1Label,idealLabel);
     else formatThreeComp(graphSigma,vsVar1Label,idealLabel);
     if(!baseOutName.empty()) HistFuncs::print(outNameSigma,"c1",true);
-    
+
     auto graphMean = plotFitParamsVsVarComp(fitParams,ResFitter::ValType::Mean);
     if(twoComp) formatTwoComp(graphMean,vsVar1Label,idealLabel,true);
     else formatThreeComp(graphMean,vsVar1Label,idealLabel,true);
@@ -207,8 +208,8 @@ void ResPlotter::printFits(const std::vector<int>& histNrs,const std::string& ba
 	delete c1;
       }
       printResComps(fitParams,outName,{0.55,1.2},vsVar1LabelStr.str());
-    }   
-  }  
+    }
+  }
 }
 
 void ResPlotter::printResComps(const std::vector<ResFitter::ParamsVsVar>& fitParamsVsVars,
@@ -222,24 +223,24 @@ void ResPlotter::printResComps(const std::vector<ResFitter::ParamsVsVar>& fitPar
     for(auto& fitParamsVsVar : fitParamsVsVars){
       fitParams.push_back(fitParamsVsVar.params()[binNr]);
     }
-      
+
     plotResComp(fitParams,plotRange);
     double binMin = fitParamsVsVars[0].binLowEdges()[binNr];
     double binMax = fitParamsVsVars[0].binLowEdges()[binNr+1];
-    
+
 
     std::ostringstream binStr;
     binStr<<std::fixed<<std::setprecision(cfg_.binLabelPrecision)<<binMin<<" #leq "<<vsVar2_.plotname<<" < "<<binMax;
-  
+
     auto binLabel = HistFuncs::makeLabel(binStr.str(),0.149,0.503484,0.402,0.573171);
     binLabel->Draw();
-    
+
     auto regionLabel = HistFuncs::makeLabel(regionStr,0.149,0.58885,0.402,0.658537);
     regionLabel->Draw();
-    
+
     auto mainLabel = HistFuncs::makeLabel(label_,0.149,0.433798,0.402,0.503484);
     mainLabel->Draw();
-    
+
     auto c1 = static_cast<TCanvas*>(gROOT->FindObject("c1"));
     c1->Update();
     auto leg = HistFuncs::getFromCanvas<TLegend>(c1,"TLegend")[0];
@@ -291,7 +292,7 @@ TGraph* ResPlotter::plotFitParamsVsVarComp(const std::vector<ResFitter::ParamsVs
     }
     legEntries.push_back({graphs[graphNr],fits[graphNr].legName()});
   }
-  
+
   auto leg = HistFuncs::makeLegend(legEntries);
   leg->Draw();
 
@@ -304,7 +305,7 @@ TGraph* ResPlotter::plotFitParamsVsVarComp(const std::vector<ResFitter::ParamsVs
     ratioGraph->GetXaxis()->SetTitleSize(0.1);
     ratioGraph->GetYaxis()->SetLabelSize(0.1);
     ratioGraph->GetYaxis()->SetTitleSize(0.11);
-    ratioGraph->GetYaxis()->SetTitleOffset(0.60); 
+    ratioGraph->GetYaxis()->SetTitleOffset(0.60);
     ratioGraph->GetYaxis()->SetTickLength(0.04);
     ratioGraph->GetXaxis()->SetTickLength(0.06);
     pads[0]->cd();
@@ -326,7 +327,7 @@ RooPlot* ResPlotter::plotResComp(std::vector<ResFitter::Param>& fitParams,
     fitParam.plot->getCurve("model_Norm[res]")->SetLineColor(getColour(fitNr));
     fitParam.plot->remove("model_paramBox");
     fitParam.plot->SetTitle("");
-    
+
     max = std::max(fitParam.plot->GetMaximum(),max);
     if(fitNr==0){
       if(xRange.first!=xRange.second){
@@ -358,9 +359,9 @@ RooPlot* ResPlotter::plotResComp(std::vector<ResFitter::Param>& fitParams,
 }
 
 void ResPlotter::formatTwoComp(TGraph* graph,TPaveLabel* vsVar1Label,TPaveLabel* infoLabel,bool isMean)const
-{ 
+{
   float vsVar2Max = vsVar2Bins_.back();
-   
+
   auto c1 = static_cast<TCanvas*>(gROOT->FindObject("c1"));
   auto pads = HistFuncs::getFromCanvas<TPad>(c1,"TPad");
   for(auto &pad : pads){
@@ -381,31 +382,31 @@ void ResPlotter::formatTwoComp(TGraph* graph,TPaveLabel* vsVar1Label,TPaveLabel*
   leg->Draw();
   vsVar1Label->Draw();
   infoLabel->Draw();
-  
+
   graph->SetTitle((";"+vsVar2_.axisLabel()).c_str());
   graph->GetXaxis()->SetRangeUser(0,vsVar2Max);
   graph->SetMarkerStyle(8);
   graph->GetYaxis()->SetRangeUser(0.8,1.1);
 }
 
-void ResPlotter::formatThreeComp(TGraph* graph,TPaveLabel* vsVar1Label,TPaveLabel* infoLabel,bool isMean)const 
+void ResPlotter::formatThreeComp(TGraph* graph,TPaveLabel* vsVar1Label,TPaveLabel* infoLabel,bool isMean)const
 {
   float vsVar2Max = vsVar2Bins_.back();
-  
+
   auto c1 = static_cast<TCanvas*>(gROOT->FindObject("c1"));
   c1->SetGridx();
   c1->SetGridy();
   c1->Update();
   auto leg = HistFuncs::getFromCanvas<TLegend>(c1,"TLegend")[0];
-  //HistFuncs::XYCoord(0.644766,0.155052,0.997773,0.301394).setNDC(leg);   
+  //HistFuncs::XYCoord(0.644766,0.155052,0.997773,0.301394).setNDC(leg);
   HistFuncs::XYCoord(0.57386,0.155137,0.927253,0.301265).setNDC(leg);
   leg->SetFillStyle(0);
   leg->Draw();
-  
+
   vsVar1Label->Draw();
   infoLabel->Draw();
   graph->SetTitle((";"+vsVar2_.axisLabel()).c_str());
-  graph->GetXaxis()->SetRangeUser(0,vsVar2Max); 
+  graph->GetXaxis()->SetRangeUser(0,vsVar2Max);
   if(isMean) graph->GetYaxis()->SetRangeUser(0.9,1.05);
 }
 
@@ -434,7 +435,7 @@ TGraph* ResPlotter::makeRatio(TGraph* numer,TGraph* denom)
     if(denomVal!=0) err+= sq(denomErr/denomVal);
     if(numerVal!=0) err+= sq(numerErr/numerVal);
     err = std::sqrt(err)*val;
-    
+
     yValues.push_back(val);
     yErrs.push_back(err);
   }
@@ -466,13 +467,13 @@ int ResPlotter::getMarkerStyle(unsigned int markerNr)
   }
   return 0;
 }
-    
- 
-//urgh this painful 
+
+
+//urgh this painful
 //ideally we would do this all at hist creation time but we dont know what to normalise to
 //as it depends on the number of events passing selection the tree and we dont have an easy access
 //so we just normalise hists after the fact
-//note due to our rather odd vector layout (it organically grew) a single histogram is consists 
+//note due to our rather odd vector layout (it organically grew) a single histogram is consists
 //of multiple 2D histograms
 void ResPlotter::normaliseHists()
 {
@@ -489,11 +490,11 @@ void ResPlotter::normaliseHists()
     minIntegral = std::min(minIntegral,histIntegral);
     histIntegrals.push_back(histIntegral);
   }
-  
+
   for(size_t histNr=0;histNr<nrHists;histNr++){
     for(const auto& histVec : histsVec_){
       histVec[histNr].first->Scale(minIntegral/histIntegrals[histNr]);
-    }      
+    }
   }
-  
+
 }
