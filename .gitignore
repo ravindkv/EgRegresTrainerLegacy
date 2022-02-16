@@ -7,3 +7,5 @@
 *.root
 *_C*
 *.pcm
+configs/
+*.pyc
