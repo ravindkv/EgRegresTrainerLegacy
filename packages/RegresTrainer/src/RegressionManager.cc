@@ -1,6 +1,6 @@
 /**
  *  @file  RegressionManager.cpp
- *  @brief  
+ *  @brief
  *
  *
  *  @author  Jean-Baptiste Sauvan <sauvan@lal.in2p3.fr>
@@ -174,12 +174,16 @@ bool RegressionManager::makeRegression()
 		    it->meanMax,
 		    it->fixMean
                     );
+            // Upto here its fine... as it gives full statistics
             if(!status)
                 break;
             // feed with variables
             string variablesEB = it->variablesEB;
             string variablesEE = it->variablesEE;
             string variablesComb = it->variablesComb;
+            std::cout << "variablesEB: " << variablesEB << std::endl;
+            std::cout << "variablesEE: " << variablesEE << std::endl;
+            std::cout << "variablesComb: " << variablesComb << std::endl;
             vector<string> tokensEB;
             vector<string> tokensEE;
             vector<string> tokensComb;
@@ -221,7 +225,7 @@ bool RegressionManager::makeRegression()
         int min = (int(t)/60)%60;
 
         cout << "INFO: RegressionManager::makeRegression(): Elapsed time = " << t << " s\n";
-        cout << "                                                        = " << hours << " h " << min << " min\n"; 
+        cout << "                                                        = " << hours << " h " << min << " min\n";
     }
     return status;
 }

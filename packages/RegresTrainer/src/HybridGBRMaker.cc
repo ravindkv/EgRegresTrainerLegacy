@@ -156,12 +156,15 @@ bool HybridGBRMaker::init(const string& name,
 
     // fill GBRtrainer with TTrees
     m_tree = new TChain(treeName.c_str());
+    std::cout << "[INFO]: Entries in input tree: " << m_tree->GetEntries() << std::endl;
     vector<string> vectorFileNames;
     tokenize(fileNames, vectorFileNames, ":");
     vector<string>::iterator it = vectorFileNames.begin();
     vector<string>::iterator itE = vectorFileNames.end();
     for(;it!=itE;++it)
     {
+        std::cout << "[INFO] File to open: " << it->c_str() << std::endl;
+        std::cout << "[INFO] Tree to open: " << treeName.c_str() << std::endl;
         TFile* fileIn = TFile::Open(it->c_str());
         if(!fileIn || !fileIn->IsOpen())
         {
@@ -171,6 +174,7 @@ bool HybridGBRMaker::init(const string& name,
         //fileIn->Close();
         m_filesIn.push_back(fileIn);
         TTree* tree = (TTree*)fileIn->Get(treeName.c_str());
+        std::cout << "[INFO#175]: Entries in input tree: " << tree->GetEntries() << std::endl;
         if(!tree)
         {
             cout << "FATAL: HybridGBRMaker::init(): Cannot find regression tree " << treeName << " in " << *it << "\n";
@@ -254,6 +258,7 @@ void HybridGBRMaker::run(const string& cutBase, const string& cutComb, const str
 /*****************************************************************/
 {
     cout << "INFO: Prepare and run training for " << m_name << "\n";
+    cout << "INFO: doEB: " << m_doEB << endl;
 
     HistFuncs::validExpression(m_target,m_tree,true);
     HistFuncs::validExpression(cutBase,m_tree,true);
@@ -319,6 +324,8 @@ void HybridGBRMaker::runEB(const string& cutBase, const string& cutEB, const str
 
     // Define event cuts
     m_cutEB = cutEB;
+    cout << "cutBase: " << cutBase.c_str() << endl;
+    cout << "cutEB:   " << cutEB.c_str() << endl;
     TCut cutCentral(cutBase.c_str());
     //TCut cutCombination(cutComb.c_str());
     TCut cutBarrel(cutEB.c_str());

@@ -4,6 +4,8 @@ regtools is a python module to collect various functions for running the regress
 import os
 import subprocess
 
+arch = os.getenv('SCRAM_ARCH')
+
 class RegArgs:
     def set_defaults(self):
         self.base_name = "reg_sc"
@@ -30,6 +32,8 @@ class RegArgs:
         self.cuts_base = "(eg_gen_energy>0 && eg_sigmaIEtaIEta>0)"
         self.ntrees = 1500
         self.do_eb = True
+        # self.isEB_temp = "(eg_eta>-1.4.0 && eg_eta<1.4)"
+        # self.isEE_temp = "(!(eg_eta>-1.4.0 && eg_eta<1.4))"
         self.isEB_temp = "(eg_eta>-1.414 && eg_eta<1.414)"
         self.isEE_temp = "(!(eg_eta>-1.414 && eg_eta<1.414))"
 
@@ -122,6 +126,7 @@ Regression.1.FixMean: {args.fix_mean}
 
     def run_eb_and_ee(self):
 
+        print('[INFO] Running function `run_eb_and_ee`')
         if not os.path.isdir(self.out_dir):
             os.mkdir(self.out_dir)
 
@@ -130,9 +135,9 @@ Regression.1.FixMean: {args.fix_mean}
 
         # Scram arch has to be set manually
 	    # This also must be done in the training script in scripts/
-        arch = os.getenv('SCRAM_ARCH')
 
-        print ("starting: {}".format(self.name()))
+        print("[INFO] starting: {}".format(self.name()))
+        print("[INFO] Input arguments:\n\tcfg name: {}".format(self.cfg_name))
         subprocess.Popen(["bin/"+arch+"/RegressionTrainerExe",self.cfg_name()]).communicate()
         forest_eb_file = self.output_name()
 
@@ -146,7 +151,6 @@ Regression.1.FixMean: {args.fix_mean}
         subprocess.Popen(["bin/"+arch+"/RegressionApplierExe",self.input_testing,self.applied_name(),"--gbrForestFileEE",forest_ee_file,"--gbrForestFileEB",forest_eb_file,"--nrThreads","4","--treeName",self.tree_name,"--writeFullTree",self.write_full_tree,"--regOutTag",self.reg_out_tag]).communicate()
 
         print ("made ",self.applied_name())
-
 
     def forest_filenames(self):
         do_eb_org = self.do_eb

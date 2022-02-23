@@ -21,7 +21,10 @@ cd EgRegresTrainerLegacy
 gmake RegressionTrainerExe -j 8
 gmake RegressionApplierExe -j 8
 export PATH=$PATH:./bin/$SCRAM_ARCH #add the binary location to path
-export PYTHON27PATH=$PYTHON3PATH:python #adds the python sub dir to python path, this may be PYTHONPATH in some systems
+export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:/afs/cern.ch/user/r/rasharma/work/EGamma-POG/HLT_tasks/regression/CMSSW_12_0_1/src/EgRegresTrainerLegacy/packages/
+# export PYTHON27PATH=$PYTHON3PATH:python #adds the python sub dir to python path, this may be PYTHONPATH in some systems
+python3 scripts/runSCRegTrainings.py --era "Run3"
+
 ```
 
 ## running the regression training
@@ -69,8 +72,10 @@ Then to make an example resolution plot:
 ```
 export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$PWD/include #otherwise will get header not found errors
 root -l -b rootScripts/setupExample.c
-hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"invTar*mean:eg_gen_eta","eg_energy/eg_gen_energy:eg_gen_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_gen_pt<20");
-compareRes({hists[0],"ECAL Energy"},{hists[1],"existing energy"},6);
+hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"invTar*mean:eg_gen_eta","eg_energy/eg_gen_energy:eg_gen_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_gen_pt>3 && eg_gen_pt<12");
+
+compareRes({hists[0],"ECAL Energy"},{hists[1],"existing energy"}, 6);
+compareRes({hists[0],"ECAL Energy"},{hists[1],"existing energy"}, 6, "3" , "12");
 ```
 
 Common issues:
