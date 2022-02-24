@@ -72,10 +72,10 @@ Then to make an example resolution plot:
 ```
 export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$PWD/include #otherwise will get header not found errors
 root -l -b rootScripts/setupExample.c
-hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"invTar*mean:eg_gen_eta","eg_energy/eg_gen_energy:eg_gen_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_gen_pt>20 && eg_gen_pt<200");
+hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"invTar*mean:eg_eta","eg_rawEnergy/eg_gen_energy:eg_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && eg_gen_pt>20 && eg_gen_pt<60 && regInvTar<10000");
 
-compareRes({hists[0],"ECAL Energy"},{hists[1],"existing energy"}, 6);
-compareRes({hists[0],"ECAL Energy"},{hists[1],"existing energy"}, 6, "20" , "200");
+#compareRes({hists[0],"ECAL Energy"},{hists[1],"existing energy"}, 6);
+compareRes({hists[0],"Corr Energy"},{hists[1],"Raw energy"}, 6, "20" , "60WithTarCut");
 ```
 
 Common issues:

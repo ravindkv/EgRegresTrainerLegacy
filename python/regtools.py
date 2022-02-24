@@ -12,7 +12,7 @@ class RegArgs:
         self.cfg_dir = "configs"
         self.out_dir = "results"
         self.tree_name = "egRegTree"
-        self.write_full_tree = "0"
+        self.write_full_tree = "1"
         self.reg_out_tag = ""
         self.min_events = 300
         self.shrinkage = 0.15
@@ -52,7 +52,7 @@ class RegArgs:
 
 
     def set_sc_default(self):
-        self.target = "eg_gen_energy/(eg_rawEnergy)"
+        self.target = "eg_rawEnergy/eg_gen_energy"
         self.var_eb = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
         self.var_ee = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
 
