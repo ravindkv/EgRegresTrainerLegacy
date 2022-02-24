@@ -2357,6 +2357,7 @@ double RooHybridBDTAutoPdf::EvalLossRooFit() {
     //nllvals[ithread] += -weight*vdt::fast_logf(pdfval);
     nllvals[ithread] += -weight*log(pdfval);
 
+    // FIXME: removed RooAbsPdf::evalError() as this is giving error, run it again and put some error details here.
     // if (RooAbsReal::numEvalErrors()>0 || RooAbsPdf::evalError() || pdfval<0.) {
     if (RooAbsReal::numEvalErrors()>0 || pdfval<0.) {
       nllvals[ithread] += std::numeric_limits<float>::max();
@@ -2524,6 +2525,7 @@ double RooHybridBDTAutoPdf::EvalLoss(double lambda, const TVectorD &dL, int itre
 //     if (testmass>178.546 && testmass<178.548)
 //       // printf("evcls = %i, pdfval = %5e, logmode = %i\n", evcls,pdfval,int(RooAbsReal::evalErrorLoggingMode()));
 
+    // FIXME: removed RooAbsPdf::evalError() as this is giving error, run it again and put some error details here.
     // if (RooAbsReal::numEvalErrors()>0 || RooAbsPdf::evalError() || pdfval<0.) {
     if (RooAbsReal::numEvalErrors()>0 || pdfval<0.) {
       nllvals[ithread] += std::numeric_limits<float>::max();

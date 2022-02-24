@@ -4,8 +4,6 @@ regtools is a python module to collect various functions for running the regress
 import os
 import subprocess
 
-arch = os.getenv('SCRAM_ARCH')
-
 class RegArgs:
     def set_defaults(self):
         self.base_name = "reg_sc"
@@ -14,12 +12,13 @@ class RegArgs:
         self.cfg_dir = "configs"
         self.out_dir = "results"
         self.tree_name = "egRegTree"
-        self.write_full_tree = "1"
+        self.write_full_tree = "0"
         self.reg_out_tag = ""
         self.min_events = 300
         self.shrinkage = 0.15
         self.min_significance = 5.0
         self.event_weight = 1.
+        # FIXME: Try to remove the min and max condition and see what happens?
         self.mean_min = 0.2
         self.mean_max = 2.0
         self.fix_mean = False
@@ -28,12 +27,9 @@ class RegArgs:
         self.target = "mc.energy/(sc.rawEnergy)"
         self.var_eb = "nrVert:sc.rawEnergy:sc.etaWidth:sc.phiWidth:ssFrac.e3x3/sc.rawEnergy:sc.seedClusEnergy/sc.rawEnergy:ssFrac.eMax/sc.rawEnergy:ssFrac.e2nd/sc.rawEnergy:ssFrac.eLeftRightDiffSumRatio:ssFrac.eTopBottomDiffSumRatio:ssFrac.sigmaIEtaIEta:ssFrac.sigmaIEtaIPhi:ssFrac.sigmaIPhiIPhi:sc.numberOfSubClusters:sc.clusterMaxDR:sc.clusterMaxDRDPhi:sc.clusterMaxDRDEta:sc.clusterMaxDRRawEnergy/sc.rawEnergy:clus1.clusterRawEnergy/sc.rawEnergy:clus2.clusterRawEnergy/sc.rawEnergy:clus3.clusterRawEnergy/sc.rawEnergy:clus1.clusterDPhiToSeed:clus2.clusterDPhiToSeed:clus3.clusterDPhiToSeed:clus1.clusterDEtaToSeed:clus2.clusterDEtaToSeed:clus3.clusterDEtaToSeed:sc.iEtaOrX:sc.iPhiOrY"
         self.var_ee = "nrVert:sc.rawEnergy:sc.etaWidth:sc.phiWidth:ssFrac.e3x3/sc.rawEnergy:sc.seedClusEnergy/sc.rawEnergy:ssFrac.eMax/sc.rawEnergy:ssFrac.e2nd/sc.rawEnergy:ssFrac.eLeftRightDiffSumRatio:ssFrac.eTopBottomDiffSumRatio:ssFrac.sigmaIEtaIEta:ssFrac.sigmaIEtaIPhi:ssFrac.sigmaIPhiIPhi:sc.numberOfSubClusters:sc.clusterMaxDR:sc.clusterMaxDRDPhi:sc.clusterMaxDRDEta:sc.clusterMaxDRRawEnergy/sc.rawEnergy:clus1.clusterRawEnergy/sc.rawEnergy:clus2.clusterRawEnergy/sc.rawEnergy:clus3.clusterRawEnergy/sc.rawEnergy:clus1.clusterDPhiToSeed:clus2.clusterDPhiToSeed:clus3.clusterDPhiToSeed:clus1.clusterDEtaToSeed:clus2.clusterDEtaToSeed:clus3.clusterDEtaToSeed:sc.iEtaOrX:sc.iPhiOrY:sc.seedEta"
-        # self.cuts_base = "(mc.energy>0 && ssFrac.sigmaIEtaIEta>0 && ssFrac.sigmaIPhiIPhi>0 && evt.eventnr%2==0)"
-        self.cuts_base = "(eg_gen_energy>0 && eg_sigmaIEtaIEta>0)"
+        self.cuts_base = "(mc.energy>0 && ssFrac.sigmaIEtaIEta>0 && ssFrac.sigmaIPhiIPhi>0 && evt.eventnr%2==0)"
         self.ntrees = 1500
         self.do_eb = True
-        # self.isEB_temp = "(eg_eta>-1.4.0 && eg_eta<1.4)"
-        # self.isEE_temp = "(!(eg_eta>-1.4.0 && eg_eta<1.4))"
         self.isEB_temp = "(eg_eta>-1.414 && eg_eta<1.414)"
         self.isEE_temp = "(!(eg_eta>-1.414 && eg_eta<1.414))"
 
@@ -56,9 +52,9 @@ class RegArgs:
 
 
     def set_sc_default(self):
-        self.target = "eg_gen_energy/eg_rawEnergy"
-        self.var_eb = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_nrClus"
-        self.var_ee = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_nrClus"
+        self.target = "eg_gen_energy/(eg_rawEnergy)"
+        self.var_eb = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
+        self.var_ee = "eg_rawEnergy:eg_phiWidth:eg_eta:eg_rawEnergy:eg_clusterMaxDR:eg_r9Full:eg_nrClus:nrHitsEB1GeV+nrHitsEE1GeV"
 
     def set_ecal_default(self):
         self.target = "mc.energy/(sc.rawEnergy + sc.rawESEnergy)"
@@ -112,8 +108,8 @@ Regression.1.VariablesEB: {args.var_eb}
 Regression.1.VariablesEE: {args.var_ee}
 Regression.1.Target: {args.target}
 Regression.1.CutBase: {args.cuts_base}
-Regression.1.CutEB: {args.isEB_temp}
-Regression.1.CutEE: {args.isEE_temp}
+Regression.1.CutEB: eg_isEB
+Regression.1.CutEE: eg_isEE
 Regression.1.MeanMin: {args.mean_min}
 Regression.1.MeanMax: {args.mean_max}
 Regression.1.FixMean: {args.fix_mean}
@@ -133,9 +129,8 @@ Regression.1.FixMean: {args.fix_mean}
         self.do_eb = True
         self.make_cfg()
 
-        # Scram arch has to be set manually
-	    # This also must be done in the training script in scripts/
-
+        # Get & set Scram arch
+        arch = os.getenv('SCRAM_ARCH')
         print("[INFO] starting: {}".format(self.name()))
         print("[INFO] Input arguments:\n\tcfg name: {}".format(self.cfg_name))
         subprocess.Popen(["bin/"+arch+"/RegressionTrainerExe",self.cfg_name()]).communicate()

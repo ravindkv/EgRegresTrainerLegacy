@@ -4,17 +4,19 @@ import subprocess
 import os
 import sys
 
+# added python directory to path so that it will find regtools
 sys.path.insert(1, 'python')
 from regtools import RegArgs
+
 import time
 import argparse
 def main():
 
     parser = argparse.ArgumentParser(description='runs the SC regression trainings')
     parser.add_argument('--era',required=True,help='year to produce for, 2016, 2017, 2018 are the options')
-    # parser.add_argument('--input_dir','-i',default='/home/hep/wrtabb/Egamma/input_trees/Run3_2021',help='input directory with the ntuples')
-    parser.add_argument('--input_dir','-i',default='/afs/cern.ch/user/r/rasharma/work/EGamma-POG/HLT_tasks/CPUtoGPUTransition/analyzer/CMSSW_12_0_1/src',help='input directory with the ntuples')
-    parser.add_argument('--output_dir','-o',default="results",help='output dir')
+    parser.add_argument('--input_dir','-i',default='/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_Arun/',help='input directory with the ntuples')
+    # parser.add_argument('--input_dir','-i',default='/afs/cern.ch/user/r/rasharma/work/EGamma-POG/HLT_tasks/CPUtoGPUTransition/analyzer/CMSSW_12_0_1/src',help='input directory with the ntuples')
+    parser.add_argument('--output_dir','-o',default="results/resultsSC",help='output dir')
     args = parser.parse_args()
 
     #step 1, run calo only regression on the ideal IC to get the mean
@@ -26,8 +28,9 @@ def main():
 
     #setup the selection (event number cuts come later)
     cuts_name = "stdCuts"
+    base_ele_cuts = "(eg_gen_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && {extra_cuts})" # Full selection for Run-3
     # base_ele_cuts = "(eg_gen_energy>0 && eg_sigmaIEtaIEta>0 && {extra_cuts})"
-    base_ele_cuts = "(1)"
+    # base_ele_cuts = "(1)"
 
     #prefixes all the regressions produced
     if args.era=='2021Run3':
@@ -38,12 +41,16 @@ def main():
         real_eventnr_cut = "evt.eventnr%5==1"
     elif args.era=='Run3':
         base_reg_name = "Run3HLT"
-        # input_ideal_ic  = "{}/HLTAnalyzerTree_IDEAL.root".format(args.input_dir)
-        # input_real_ic = "{}/HLTAnalyzerTree_REAL.root".format(args.input_dir)
-        input_ideal_ic  = "{}/ideal.root".format(args.input_dir)
-        input_real_ic = "{}/real.root".format(args.input_dir)
-        ideal_eventnr_cut = "(1)"  #4million electrons (we determined 4 million was optimal but after the 2017 was done)
-        real_eventnr_cut = "(1)" #4million electrons (we determined 4 million was optimal but after the 2017 was done)
+        input_ideal_ic  = "{}/HLTAnalyzerTree_IDEAL.root".format(args.input_dir)
+        input_real_ic = "{}/HLTAnalyzerTree_REAL.root".format(args.input_dir)
+        # input_ideal_ic  = "{}/ideal.root".format(args.input_dir)
+        # input_real_ic = "{}/real.root".format(args.input_dir)
+
+        # ideal_eventnr_cut = "(1)"  #4million electrons (we determined 4 million was optimal but after the 2017 was done)
+        # real_eventnr_cut = "(1)" #4million electrons (we determined 4 million was optimal but after the 2017 was done)
+
+        ideal_eventnr_cut = "(eventnr%4==0)"  #4million electrons (we determined 4 million was optimal but after the 2017 was done)
+        real_eventnr_cut = "(eventnr%4==1)" #4million electrons (we determined 4 million was optimal but after the 2017 was done)
     else:
         raise ValueError("era {} is invalid, the only available option is 2021Run3/Run3".format(era))
 
@@ -54,7 +61,7 @@ def main():
     regArgs.set_sc_default()
     regArgs.tree_name = "egHLTRun3Tree"
     regArgs.cfg_dir = "configs"
-    regArgs.out_dir = "results/resultsSC"
+    regArgs.out_dir = args.output_dir
     regArgs.cuts_name = cuts_name
     regArgs.base_name = "{}_IdealIC_IdealTraining".format(base_reg_name)
     regArgs.cuts_base = base_ele_cuts.format(extra_cuts = ideal_eventnr_cut)
@@ -77,30 +84,31 @@ steps to be run:
 
     print("===> Running step - 1")
     if run_step1: regArgs.run_eb_and_ee()
-    # regArgs.do_eb = True
-    # forest_eb_file = regArgs.output_name()
-    # regArgs.do_eb = False
-    # forest_ee_file = regArgs.output_name()
 
-    # regArgs.base_name = "{}_RealIC_IdealTraining".format(base_reg_name)
-    # input_for_res_training = str(regArgs.applied_name()) #save the output name before we change it
-    # input_for_input_for_res_training = str(input_real_ic)
+    regArgs.do_eb = True
+    forest_eb_file = regArgs.output_name()
+    regArgs.do_eb = False
+    forest_ee_file = regArgs.output_name()
 
-    # # Set scram arch
-    # arch = os.getenv('SCRAM_ARCH')
+    regArgs.base_name = "{}_RealIC_IdealTraining".format(base_reg_name)
+    input_for_res_training = str(regArgs.applied_name()) #save the output name before we change it
+    input_for_input_for_res_training = str(input_real_ic)
 
-    # print("===> Running step - 2")
-    # if run_step2: subprocess.Popen(["bin/"+arch+"/RegressionApplierExe",input_for_input_for_res_training,input_for_res_training,"--gbrForestFileEE",forest_ee_file,"--gbrForestFileEB",forest_eb_file,"--nrThreads","4","--treeName",regArgs.tree_name,"--writeFullTree","1","--regOutTag","Ideal"]).communicate()
+    # Set scram arch
+    arch = os.getenv('SCRAM_ARCH')
 
-    # regArgs.base_name = "{}_RealIC_RealTraining".format(base_reg_name)
-    # regArgs.input_training = input_for_res_training
-    # regArgs.input_testing = input_for_res_training
-    # regArgs.target = "eg_gen_energy/(eg_rawEnergy*regIdealMean)"
-    # regArgs.fix_mean = True
-    # regArgs.cuts_base = base_ele_cuts.format(extra_cuts = real_eventnr_cut)
+    print("===> Running step - 2")
+    if run_step2: subprocess.Popen(["bin/"+arch+"/RegressionApplierExe",input_for_input_for_res_training,input_for_res_training,"--gbrForestFileEE",forest_ee_file,"--gbrForestFileEB",forest_eb_file,"--nrThreads","4","--treeName",regArgs.tree_name,"--writeFullTree","1","--regOutTag","Ideal"]).communicate()
 
-    # print("===> Running step - 3")
-    # if run_step3: regArgs.run_eb_and_ee()
+    regArgs.base_name = "{}_RealIC_RealTraining".format(base_reg_name)
+    regArgs.input_training = input_for_res_training
+    regArgs.input_testing = input_for_res_training
+    regArgs.target = "eg_gen_energy/(eg_rawEnergy*regIdealMean)"
+    regArgs.fix_mean = True
+    regArgs.cuts_base = base_ele_cuts.format(extra_cuts = real_eventnr_cut)
+
+    print("===> Running step - 3")
+    if run_step3: regArgs.run_eb_and_ee()
 
 if __name__ =='__main__':
     main()
