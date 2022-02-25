@@ -14,9 +14,9 @@ def main():
 
     parser = argparse.ArgumentParser(description='runs the SC regression trainings')
     parser.add_argument('--era',required=True,help='year to produce for, 2016, 2017, 2018 are the options')
-    parser.add_argument('--input_dir','-i',default='/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_Arun/',help='input directory with the ntuples')
+    parser.add_argument('--input_dir','-i',default='/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/',help='input directory with the ntuples')
     # parser.add_argument('--input_dir','-i',default='/afs/cern.ch/user/r/rasharma/work/EGamma-POG/HLT_tasks/CPUtoGPUTransition/analyzer/CMSSW_12_0_1/src',help='input directory with the ntuples')
-    parser.add_argument('--output_dir','-o',default="/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_Arun/results/resultsSC_MainNtuples_Arun_FullSelection",help='output dir')
+    parser.add_argument('--output_dir','-o',default="/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/results/resultsSC_MainNtuples_FullSelection",help='output dir')
     args = parser.parse_args()
 
     #step 1, run calo only regression on the ideal IC to get the mean
