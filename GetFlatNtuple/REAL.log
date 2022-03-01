@@ -1,0 +1,11 @@
+nohup: ignoring input
+
+Processing GetFlatNtuple.C("/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/HLTAnalyzerTree_REAL.root","/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/HLTAnalyzerTree_REAL_Flat_Small.root")...
+Input  file ==> /eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/HLTAnalyzerTree_REAL.root
+Output file ==> /eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/HLTAnalyzerTree_REAL_Flat_Small.root
+Total entries: 3548608
+[                                                  ] 0%                                                  ] 0%#                                             ] 10%#                                     ] 26%#                                ] 36%#                             ] 42%#                        ] 52%#                ] 68%#           ] 78%#        ] 84%#   ] 94%
+Time taken: 3.15s
+
+Time taken to run full code: 3.15s  (0.05m)
+
