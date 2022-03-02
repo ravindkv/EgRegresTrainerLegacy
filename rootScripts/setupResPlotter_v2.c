@@ -25,34 +25,40 @@
 	RooMsgService::instance().setSilentMode(true);
 	gErrorIgnoreLevel = kError;
 
-	gROOT->ProcessLine(".L makeResPlots.C+");
-	TTree* regTestTree = HistFuncs::makeChain("egHLTRun3Tree","/afs/cern.ch/user/r/rasharma/work/EGamma-POG/HLT_tasks/CPUtoGPUTransition/analyzer/CMSSW_12_0_1/src/HLTAnalyzerTree_REAL.root");
-	regTestTree->AddFriend("regCorr = egHLTRun3TreeFriend","results/resultsSC_CMSSW12X_15Feb/Run3HLT_RealIC_RealTraining_stdVar_stdCuts_ntrees1500_applied_hadd.root");
+	// inFile = "/afs/cern.ch/user/r/rasharma/work/EGamma-POG/HLT_tasks/CPUtoGPUTransition/analyzer/CMSSW_12_0_1/src/HLTAnalyzerTree_REAL.root";
+	// inFileFriend = "results/resultsSC_CMSSW12X_15Feb/Run3HLT_RealIC_RealTraining_stdVar_stdCuts_ntrees1500_applied_hadd.root";
 
-    std::vector<std::string> plotVars = {"invTar*mean:eg_gen_eta","eg_energy/eg_gen_energy:eg_gen_eta"};
+	inFile = "/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/results/resultsSC_MainNtuples_FullSelection_FlatNtuple/Run3HLT_RealIC_RealTraining_stdVar_stdCuts_ntrees1500_applied.root";
+
+	gROOT->ProcessLine(".L makeResPlots.C+");
+	TTree* regTestTree = HistFuncs::makeChain("egHLTRun3Tree",inFile);
+	// regTestTree->AddFriend("regCorr = egHLTRun3TreeFriend",inFileFriend);
+
+    // std::vector<std::string> plotVars = {"invTar*mean:eg_gen_eta","eg_energy/eg_gen_energy:eg_gen_eta"};
+    std::vector<std::string> plotVars = {"regInvTar*regMean:eg_gen_eta","eg_energy/eg_gen_energy:eg_gen_eta"};
 
 	// TString pTCutLow = "3";
 	// TString pTCutUp  = "500";
 
 	TString pTCutLow = "3";
-	TString pTCutUp  = "12";
+	// TString pTCutUp  = "10";
 
-	// TString pTCutLow = "12";
-	// TString pTCutUp  = "20";
-
-	// TString pTCutLow = "3";
+	// TString pTCutLow = "10";
 	// TString pTCutUp  = "20";
 
 	// TString pTCutLow = "20";
+	// TString pTCutUp  = "60";
+
+	// TString pTCutLow = "60";
 	// TString pTCutUp  = "200";
 
 	// TString pTCutLow = "200";
-	// TString pTCutUp  = "500";
+	TString pTCutUp  = "500";
 
 	TString baseCuts = "eg_energy>0 && eg_gen_energy> 0 && eg_sigmaIEtaIEta>0 && eg_gen_pt>"+pTCutLow+" && eg_gen_pt<"+pTCutUp;
 
 	std::vector<TH2*> hists3 = makeHists(regTestTree,etaBins3p0,150,0.0,1.5,plotVars,(const std::string)baseCuts);
 	// std::vector<TH2*> hists3 = makeHists(regTestTree,etaBins,51,0.6,1.2,plotVars,(const std::string)baseCuts);
-	compareRes({hists3[0],"ECAL Energy"},{hists3[1],"existing energy"}, 6, pTCutLow , pTCutUp);
+	compareRes({hists3[0],"Raw Energy"},{hists3[1],"Corr energy"}, 6, pTCutLow , pTCutUp);
 
 }

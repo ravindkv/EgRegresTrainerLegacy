@@ -73,14 +73,19 @@ Then to make an example resolution plot:
 export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$PWD/include #otherwise will get header not found errors
 #root -l -b rootScripts/setupExample.c
 root -l rootScripts/setupExample.c
-hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"invTar*mean:eg_eta","eg_rawEnergy/eg_gen_energy:eg_eta","eg_energy/eg_gen_energy:eg_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && eg_gen_pt>60 && eg_gen_pt<200");
+hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"invTar*mean:eg_eta","eg_rawEnergy/eg_gen_energy:eg_eta","eg_energy/eg_gen_energy:eg_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && eg_gen_pt>20 && eg_gen_pt<60");
 
-hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"regInvTar*regMean:eg_eta","eg_rawEnergy/eg_gen_energy:eg_eta","eg_energy/eg_gen_energy:eg_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && eg_gen_pt>3 && eg_gen_pt<20 ");
+
+// hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"regInvTar*regMean:eg_eta","eg_rawEnergy/eg_gen_energy:eg_eta","eg_energy/eg_gen_energy:eg_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && eg_gen_pt>3 && eg_gen_pt<20 ");
 
 
 #compareRes({hists[0],"ECAL Energy"},{hists[1],"existing energy"}, 6);
 compareRes({hists[0],"Corr Energy"},{hists[1],"raw energy"}, 6, "20" , "60");
-compareRes({hists[0],"Corr Energy"},{hists[1],"raw energy"},{hists[2],"corr energy (old)"}, 6);
+
+#hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"1/(regInvTar*regMean):eg_eta","eg_rawEnergy/eg_gen_energy:eg_eta","eg_energy/eg_gen_energy:eg_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && eg_gen_pt>20 && eg_gen_pt<60")
+
+hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"regInvTar*regMean:eg_eta","eg_rawEnergy/eg_gen_energy:eg_eta","eg_energy/eg_gen_energy:eg_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && eg_gen_pt>20 && eg_gen_pt<60")
+compareRes({hists[0],"Corr Energy"},{hists[1],"raw energy"},{hists[2],"corr energy (old)"}, 6)
 ```
 
 Common issues:

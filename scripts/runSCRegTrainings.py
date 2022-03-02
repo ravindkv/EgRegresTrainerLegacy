@@ -16,15 +16,15 @@ def main():
     parser.add_argument('--era',required=True,help='year to produce for, 2016, 2017, 2018 are the options')
     parser.add_argument('--input_dir','-i',default='/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/',help='input directory with the ntuples')
     # parser.add_argument('--input_dir','-i',default='/afs/cern.ch/user/r/rasharma/work/EGamma-POG/HLT_tasks/CPUtoGPUTransition/analyzer/CMSSW_12_0_1/src',help='input directory with the ntuples')
-    parser.add_argument('--output_dir','-o',default="/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/results/resultsSC_MainNtuples_FullSelection",help='output dir')
+    parser.add_argument('--output_dir','-o',default="/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/results/resultsSC_MainNtuples_FullSelection_FlatNtuple",help='output dir')
     args = parser.parse_args()
 
     #step 1, run calo only regression on the ideal IC to get the mean
     #step 2, apply the mean to the real IC sample and save the result in a tree
     #step 3, retrain the resolution for the real IC on the corrected energy
-    run_step1 = False
+    run_step1 = True
     run_step2 = True
-    run_step3 = False
+    run_step3 = True
 
     #setup the selection (event number cuts come later)
     cuts_name = "stdCuts"
@@ -41,8 +41,14 @@ def main():
         real_eventnr_cut = "evt.eventnr%5==1"
     elif args.era=='Run3':
         base_reg_name = "Run3HLT"
-        input_ideal_ic  = "{}/HLTAnalyzerTree_IDEAL.root".format(args.input_dir)
-        input_real_ic = "{}/HLTAnalyzerTree_REAL.root".format(args.input_dir)
+        # input_ideal_ic  = "{}/HLTAnalyzerTree_IDEAL.root".format(args.input_dir)
+        # input_real_ic = "{}/HLTAnalyzerTree_REAL.root".format(args.input_dir)
+        input_ideal_ic  = "{}/HLTAnalyzerTree_IDEAL_Flat.root".format(args.input_dir)
+        input_real_ic = "{}/HLTAnalyzerTree_REAL_Flat.root".format(args.input_dir)
+
+        # input_ideal_ic  = "{}/HLTAnalyzerTree_IDEAL_Flat_Small.root".format(args.input_dir)
+        # input_real_ic = "{}/HLTAnalyzerTree_REAL_Flat_Small.root".format(args.input_dir)
+
         # input_ideal_ic  = "{}/ideal.root".format(args.input_dir)
         # input_real_ic = "{}/real.root".format(args.input_dir)
 
