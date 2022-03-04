@@ -58,7 +58,7 @@ void GetFlatNtuple(
     int temp_percentage_done = 0;
     progressbar bar(20);
 
-    nentries = 20000;
+    // nentries = 20000;
     for (Long64_t jentry=0; jentry<nentries;jentry++) {
         egHLTRun3Tree_.GetEntry(jentry);
 

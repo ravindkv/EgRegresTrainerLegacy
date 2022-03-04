@@ -26,7 +26,7 @@ git cms-merge-topic Sam-Harper:EGHLTCustomisation_1130pre4
 hltGetConfiguration /users/swmukher/egm_ele5_open/V16 --setup /dev/CMSSW_12_0_0/GRun/V6 --globaltag 120X_mcRun3_2021_realistic_v6 --input root://cms-xrd-global.cern.ch///store/mc/Run3Winter21DRMiniAOD/DoubleElectron_Pt-1To300-gun/GEN-SIM-DIGI-RAW/FlatPU0to80FEVT_112X_mcRun3_2021_realistic_v16-v3/120000/0019ce34-a026-4ec0-83a5-3094586bce59.root --mc --process MYHLT --prescale none --max-events 50 --eras Run3 --output none --customise HLTrigger/Configuration/customizeHLTforEGamma.customiseEGammaMenuDev > hlt_real.py
 
 # hltGetConfiguration command for ideal
-hltGetConfiguration /users/swmukher/egm_ele5_open/V16 --setup /dev/CMSSW_12_0_0/GRun/V6 --globaltag auto:120X_mcRun3_2021_realistic_v6_ECALIdealIC --input root://cms-xrd-global.cern.ch///store/mc/Run3Winter21DRMiniAOD/DoubleElectron_Pt-1To300-gun/GEN-SIM-DIGI-RAW/FlatPU0to80FEVT_112X_mcRun3_2021_realistic_v16-v3/120000/0019ce34-a026-4ec0-83a5-3094586bce59.root --mc --process MYHLT --prescale none --max-events 50 --eras Run3 --output none --customise HLTrigger/Configuration/customizeHLTforEGamma.customiseEGammaMenuDev  > hlt_ideal.py
+hltGetConfiguration /users/swmukher/egm_ele5_open/V16 --setup /dev/CMSSW_12_0_0/GRun/V6 --globaltag 120X_mcRun3_2021_realistic_v6_ECALIdealIC --input root://cms-xrd-global.cern.ch///store/mc/Run3Winter21DRMiniAOD/DoubleElectron_Pt-1To300-gun/GEN-SIM-DIGI-RAW/FlatPU0to80FEVT_112X_mcRun3_2021_realistic_v16-v3/120000/0019ce34-a026-4ec0-83a5-3094586bce59.root --mc --process MYHLT --prescale none --max-events 50 --eras Run3 --output none --customise HLTrigger/Configuration/customizeHLTforEGamma.customiseEGammaMenuDev  > hlt_ideal.py
 
 # proxy
 voms-proxy-init --voms cms --valid 168:00
@@ -66,6 +66,22 @@ python3 Analysis/HLTAnalyserPy/test/runMultiThreaded.py  -o ZPrime_petaTrk.root 
 
 # Upload new regression to GT
 
+Need to create 4 .db files. Two files for the correction and another two files for the uncertainty, for EB and EE respectively. We should compute correction from ideal training and uncertainty from real training.
+
+They are:
+1. Correction for EB: We should get this from `Run3HLT_IdealIC_IdealTraining_stdVar_stdCuts_EB_ntrees1500_results.root`
+    - Label: `EBCorrection`
+    - Tag: `pfscecal_EBCorrection_online_Run3_120X_v1`
+2. Uncertainty for EB: We should get this from `Run3HLT_RealIC_RealTraining_stdVar_stdCuts_EB_ntrees1500_results.root`
+    - Label: `EBUncertainty`
+    - Tag: `pfscecal_EBUncertainty_online_Run3_120X_v1`
+3. Correction for EE: We should get this from `Run3HLT_IdealIC_IdealTraining_stdVar_stdCuts_EE_ntrees1500_results.root`
+    - Label: `EECorrection`
+    - Tag: `pfscecal_EECorrection_online_Run3_120X_v1`
+4. Uncertainty for EE: We should get this from `Run3HLT_RealIC_RealTraining_stdVar_stdCuts_EE_ntrees1500_results.root`
+    - Label: `EECorrection`
+    - Tag: `pfscecal_EEUncertainty_online_Run3_120X_v1`
+
 - Setup
     ```bash
     cmsrel CMSSW_10_2_13
@@ -78,10 +94,20 @@ python3 Analysis/HLTAnalyserPy/test/runMultiThreaded.py  -o ZPrime_petaTrk.root 
 
 - Command to run
     ```bash
+    # ideal: Run3HLT_IdealIC_IdealTraining_stdVar_stdCuts_EB_ntrees1500_results.root
+    # ideal: Run3HLT_IdealIC_IdealTraining_stdVar_stdCuts_EE_ntrees1500_results.root
+    # real: Run3HLT_RealIC_RealTraining_stdVar_stdCuts_EB_ntrees1500_results.root
+    # real: Run3HLT_RealIC_RealTraining_stdVar_stdCuts_EE_ntrees1500_results.root
     cd $CMSSW_10_2_13/src
-    cmsRun RecoEgamma/EgammaDBTools/test/gbrForestDBWriter.py gbrFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/results/resultsSC_MainNtuples_FullSelection_FlatNtuple/Run3HLT_RealIC_RealTraining_stdVar_stdCuts_EB_ntrees1500_results.root fileLabel=EBCorrection dbTag=pfscecal_EBCorrection_online_Run3_120X_v1 dbLabel=pfscecal_EBCorrection_online dbFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/dbFiles/pfscecal_EBCorrection_online_Run3_120X_v1
+    cmsRun RecoEgamma/EgammaDBTools/test/gbrForestDBWriter.py gbrFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/results/resultsSC_MainNtuples_FullSelection_FlatNtuple/Run3HLT_IdealIC_IdealTraining_stdVar_stdCuts_EB_ntrees1500_results.root fileLabel=EBCorrection dbTag=pfscecal_EBCorrection_online_Run3_120X_v1 dbLabel=pfscecal_EBCorrection_online dbFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/dbFiles/pfscecal_EBCorrection_online_Run3_120X_v1
+
+    cmsRun RecoEgamma/EgammaDBTools/test/gbrForestDBWriter.py gbrFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/results/resultsSC_MainNtuples_FullSelection_FlatNtuple/Run3HLT_IdealIC_IdealTraining_stdVar_stdCuts_EE_ntrees1500_results.root fileLabel=EECorrection dbTag=pfscecal_EECorrection_online_Run3_120X_v1 dbLabel=pfscecal_EECorrection_online dbFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/dbFiles/pfscecal_EECorrection_online_Run3_120X_v1
+
+    cmsRun RecoEgamma/EgammaDBTools/test/gbrForestDBWriter.py gbrFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/results/resultsSC_MainNtuples_FullSelection_FlatNtuple/Run3HLT_RealIC_RealTraining_stdVar_stdCuts_EB_ntrees1500_results.root fileLabel=EBUncertainty dbTag=pfscecal_EBUncertainty_online_Run3_120X_v1 dbLabel=pfscecal_EBUncertainty_online dbFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/dbFiles/pfscecal_EBUncertainty_online_Run3_120X_v1
+
+    cmsRun RecoEgamma/EgammaDBTools/test/gbrForestDBWriter.py gbrFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/results/resultsSC_MainNtuples_FullSelection_FlatNtuple/Run3HLT_RealIC_RealTraining_stdVar_stdCuts_EE_ntrees1500_results.root fileLabel=EEUncertainty dbTag=pfscecal_EEUncertainty_online_Run3_120X_v1 dbLabel=pfscecal_EEUncertainty_online dbFilename=/eos/user/r/rasharma/post_doc_ihep/EGamma/HLT/regression/MainNtuples_v2/dbFiles/pfscecal_EEUncertainty_online_Run3_120X_v1
     ```
-- Re-run HLT step: In the first hlt\*.py configuration file append the following lines (with proper naming conventions) and run:
+- Re-run HLT step: In the first hlt\*.py configuration file append the following lines (with proper naming conventions and 4 times corresponding to above 4 .db files) and run:
 
    ```python
     process.GlobalTag.toGet.extend( cms.VPSet(
