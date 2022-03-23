@@ -19,7 +19,8 @@ It links against CMSSW but is otherwise standalone and is not built as part of C
     :hidden:
 
     GetHLTConfig.rst
-
+    GetReducedNtuples.rst
+    NextSteps.rst
 
 Indices and tables
 ==================
