@@ -1,4 +1,5 @@
 .. EGamma Regression documentation master file, created by
+.. EGamma Regression documentation master file, created by
    sphinx-quickstart on Wed Mar 23 22:16:56 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -21,6 +22,7 @@ It links against CMSSW but is otherwise standalone and is not built as part of C
     GetHLTConfig.rst
     GetReducedNtuples.rst
     NextSteps.rst
+    References.rst
 
 Indices and tables
 ==================
