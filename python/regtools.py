@@ -53,8 +53,8 @@ class RegArgs:
 
     def set_sc_default(self):
         self.target = "eg_gen_energy/eg_rawEnergy"
-        self.var_eb = "nrHitsEB1GeV+nrHitsEE1GeV:eg_eta:eg_phiWidth:eg_r9Full:eg_nrClus:eg_clusterMaxDR:eg_rawEnergy"
-        self.var_ee = "nrHitsEB1GeV+nrHitsEE1GeV:eg_eta:eg_phiWidth:eg_r9Full:eg_nrClus:eg_clusterMaxDR:eg_rawEnergy"
+        self.var_eb = "nrHitsEB1GeV+nrHitsEE1GeV:eg_eta:eg_phiWidth:eg_r9Frac:eg_nrClus:eg_clusterMaxDR:eg_rawEnergy"
+        self.var_ee = "nrHitsEB1GeV+nrHitsEE1GeV:eg_eta:eg_phiWidth:eg_r9Frac:eg_nrClus:eg_clusterMaxDR:eg_rawEnergy"
 
     def set_ecal_default(self):
         self.target = "mc.energy/(sc.rawEnergy + sc.rawESEnergy)"
