@@ -5,9 +5,11 @@ It links against CMSSW but is otherwise standalone and is not built as part of C
 
 
 ```{toctree}
-
-:maxdepth: 2
-:caption: Contents:
+---
+numbered:
+maxdepth: 2
+caption: Contents
+---
 
 GetHLTConfig
 GetReducedNtuples
