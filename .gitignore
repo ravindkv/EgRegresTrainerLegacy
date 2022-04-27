@@ -11,3 +11,5 @@ configs/
 *.pyc
 *.png
 *.log
+.DS_Store
+.vscode

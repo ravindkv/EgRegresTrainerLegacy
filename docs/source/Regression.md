@@ -1,19 +1,58 @@
-# Run regression
+# Regression
 
-- Input root file: Input root file should be flat tree. All the branches should be int, float, double, etc. Branches should not be saved as vector.
+## Some general information
+
+- `Input root file`: Input root file should be flat tree. All the branches should be `int`, `float`, `double`, etc. Branches should not be saved as `vector`.
     - This means that if in an event we have two electrons then the same event number will appear twice, if we `Scan` the root file.
 - Input target variable: `(True Energy) / (Raw Energy)`
 - List of input variables for the training:
-      1. SC energy
-      2. eta
+
+    1. `nrHitsEB1GeV+nrHitsEE1GeV`: Total number of ECAL rechits in EB and EE above 1 GeV threshold
+    1. `eg_eta`: rapidity
+    1. `eg_phiWidth`: phi-width of supercluster
+    1. `eg_r9Frac`: Fractional R9
+    1. `eg_nrClus`: Total number of clusters in supercluster
+    1. `eg_clusterMaxDR`: Maximum distance between the seed and clusters inside the SC
+    1. `eg_rawEnergy`: Raw energy
+
 - Output
     1. invTar: Invarse target, i.e. `(Raw Energy) / (True Energy)`
     2. To get the corrected response: `invTar * mean`
 
+## Regression setup
 
-# Verify new regression by re-running hlt
+```bash
+cmsrel CMSSW_12_0_1
+cd CMSSW_12_0_1/src
+git clone -b Run3_2021_Robert_CMSSW12_0_1_FullSelection https://github.com/ram1123/EgRegresTrainerLegacy.git
+cd EgRegresTrainerLegacy
+gmake RegressionTrainerExe -j 8
+gmake RegressionApplierExe -j 8
+export PATH=$PATH:./bin/$SCRAM_ARCH #add the binary location to path
+python3 scripts/runSCRegTrainings.py --era "Run3"
+```
 
-## Upload new regression to GT
+### Regression performance test
+
+For this compare the distribution of `E_reco/E_gen` and `regInvTar*regMean`.
+
+Here, `regInvTar*regMean` should be equivalent to `E_reco/E_gen` after the regression correction. So, the distribution of `regInvTar*regMean` should be closer to 1 with narrow width.
+
+An example script exists here: [Plot_mean.py](https://github.com/ram1123/EgRegresTrainerLegacy/blob/Run3_2021_Robert_CMSSW12_0_1_FullSelection/Plot_mean.py)
+
+Or this can be also checked like:
+
+```bash
+export ROOT_INCLUDE_PATH=$ROOT_INCLUDE_PATH:$PWD/include #otherwise will get header not found errors
+#root -l -b rootScripts/setupExample.c
+root -l rootScripts/setupExample.c
+hists = makeHists(regTestTree,{-3.0,-2.5,-2.,-1.6,-1.566,-1.4442,-1.1,-0.7,0.,0.7,1.1,1.4442,1.566,1.6,2.,2.5,3.0},150,0,1.5,{"regInvTar*regMean:eg_eta","eg_rawEnergy/eg_gen_energy:eg_eta","eg_energy/eg_gen_energy:eg_eta"},"eg_energy>0 && eg_sigmaIEtaIEta>0 && eg_sigmaIPhiIPhi>0 && eg_gen_pt>20 && eg_gen_pt<60")
+compareRes({hists[0],"Corr Energy"},{hists[1],"raw energy"},{hists[2],"corr energy (old)"}, 6)
+```
+
+## Verify new regression by re-running hlt
+
+### Upload new regression to GT
 
 Need to create 4 `.db` files. Two files for the correction and another two files for the uncertainty, for EB and EE respectively. We should compute correction from ideal training and uncertainty from real training.
 
