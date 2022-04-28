@@ -1,5 +1,11 @@
 # Get HLT Configuration file
 
+The detailed instructions about the HLT configuration files can be find in the twiki page "E/gamma HLT: Recommendations for PAG" ([link](https://twiki.cern.ch/twiki/bin/viewauth/CMS/EGMHLTRun3RecommendationForPAG)) and the links/references therein.
+
+```{note}
+The following commands are used for the training of the Run - 3 HLT regression.
+```
+
 ## Setup
 
 ```bash
@@ -14,7 +20,7 @@ voms-proxy-init --voms cms --valid 168:00
 
 ## Get hltConfig file
 
-* Get the hlt config using the following two global tag
+* Get the hlt config using the following two **global tags**:
    * REAL:  `120X_mcRun3_2021_realistic_v6`
    * IDEAL: `120X_mcRun3_2021_realistic_v6_ECALIdealIC`
 
@@ -31,6 +37,8 @@ hltGetConfiguration /users/swmukher/egm_ele5_open/V16 --setup /dev/CMSSW_12_0_0/
 ```bash
 hltGetConfiguration /users/swmukher/egm_ele5_open/V16 --setup /dev/CMSSW_12_0_0/GRun/V6 --globaltag 120X_mcRun3_2021_realistic_v6_ECALIdealIC --input root://cms-xrd-global.cern.ch///store/mc/Run3Winter21DRMiniAOD/DoubleElectron_Pt-1To300-gun/GEN-SIM-DIGI-RAW/FlatPU0to80FEVT_112X_mcRun3_2021_realistic_v16-v3/120000/0019ce34-a026-4ec0-83a5-3094586bce59.root --mc --process MYHLT --prescale none --max-events 50 --eras Run3 --output none --customise HLTrigger/Configuration/customizeHLTforEGamma.customiseEGammaMenuDev  > hlt_ideal.py
 ```
+
+- With the previous two commands, we will get the two configuration files. Check them first by running locally using `cmsRun`. If it works fine submit the crab job over full statistics.
 
 ## Crab Submit
 
@@ -81,8 +89,8 @@ config.Site.storageSite = 'T2_CH_CERN'
 
 - To run the above crab script:
 
-```bash
-crab submit crab_config_ideal.py
-```
+    ```bash
+    crab submit crab_config_ideal.py
+    ```
 
-- To get the last hltconfig file used and the crab scripts you can checkout the github repository [EGamma_hltConfig_Regression](https://github.com/ram1123/EGamma_hltConfig_Regression>)
+- To get the last hltconfig file used and the crab scripts you can check the github repository: [EGamma_hltConfig_Regression](https://github.com/ram1123/EGamma_hltConfig_Regression>)

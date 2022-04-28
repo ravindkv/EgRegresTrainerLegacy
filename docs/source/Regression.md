@@ -1,6 +1,6 @@
 # Regression
 
-The main readme link of the regression framework can be seen here {doc}`Default_RegressionREADME`
+The main readme link, with the details of the regression framework,  can be seen here: {doc}`link <Default_RegressionREADME>`.
 
 ## Some general information
 
