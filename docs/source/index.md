@@ -1,14 +1,11 @@
 # EGamma Regression Trainer
 
-This is the E/gamma Energy Regression Trainer used for RunII. It is [RegressionTrainer](https://github.com/cms-egamma/RegressionTrainer>) and [HiggsAnalysis](https://github.com/cms-egamma/HiggsAnalysis>) ported to a common build system.
-It links against CMSSW but is otherwise standalone and is not built as part of CMSSW. It is very much a legacy tool and E/gamma wishes to move away from it as quickly as possible. So you have been warned.
-
 The egamma regression training has following steps:
 
 1. Get the input sample for the training
-    1. The regression training needs two
-1. Train the regression
-1. Check the training output files by re-running the HLT step, if its working as expected!!!
+    1. The regression training needs two input root file. One corresponds to the `ideal Intercalibration Constants (IC)` and another for the `real IC`.
+1. Train the regression and check its performance.
+1. Re-validate the training by re-running the HLT step with the updated .db file.
 1. Upload the `.db` file having the training information in the Global Tag (GT).
 
 
