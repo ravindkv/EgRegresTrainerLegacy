@@ -1,5 +1,7 @@
 # Regression
 
+The main readme link of the regression framework can be seen here {doc}`Default_RegressionREADME`
+
 ## Some general information
 
 - `Input root file`: Input root file should be flat tree. All the branches should be `int`, `float`, `double`, etc. Branches should not be saved as `vector`.
@@ -71,7 +73,7 @@ They are:
     - Label: `pfscecal_EEUncertainty_online`
     - Tag: `pfscecal_EEUncertainty_online_Run3_120X_v1`
 
-### Setup
+### Get DBTool Setup
 
 ```bash
 cmsrel CMSSW_10_2_13
