@@ -4,6 +4,7 @@
 
 - Added the switch for the inclusion of PS energy: [PR#37491](https://github.com/cms-sw/cmssw/pull/37491)
 - **Backport PR**, [12_3_X] Added the switch for the inclusion of PS energy: [PR#37494](https://github.com/cms-sw/cmssw/pull/37494)
+- ***JIRA Ticket*** (Run3 supercluster regression for EGM HLT): [https://its.cern.ch/jira/browse/CMSHLT-2293](https://its.cern.ch/jira/browse/CMSHLT-2293)
 
 ## Other related PRs
 

@@ -22,5 +22,6 @@ Regression
 GetHLTConfigForCMSSWComp
 References
 PR_Lists
+Important_Talks
 Default_RegressionREADME
 ```
