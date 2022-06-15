@@ -8,7 +8,7 @@
 
 3. [Sam Harper, May 6, 2019, “SuperCluster Energy RegressionFor UL 2017"](https://indico.cern.ch/event/787314/contributions/3417081/attachments/1839017/3016367/superClusterRegressionUL_fixed.pdf)
 
-4. [Sam Harper, May 24, “Electron and Photon Regressions for the 2017 UL”](https://indico.cern.ch/event/787354/contributions/3440809/attachments/1850625/3037923/elePhoRegressions_2017UL.pdf)
+4. [Sam Harper, May 24, 2019, “Electron and Photon Regressions for the 2017 UL”](https://indico.cern.ch/event/787354/contributions/3440809/attachments/1850625/3037923/elePhoRegressions_2017UL.pdf)
 
 5. [Sam Harper, June 5, 2019, “E/gamma Ele/Pho Regressions for the 2017 UL"](https://indico.cern.ch/event/787355/contributions/3453254/attachments/1858756/3054001/egamma_2017ULRegressions_PPD.pdf)
 
