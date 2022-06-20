@@ -16,6 +16,8 @@ The main readme link, with the details of the regression framework,  can be seen
     1. `eg_nrClus`: Total number of clusters in supercluster
     1. `eg_clusterMaxDR`: Maximum distance between the seed and clusters inside the SC
     1. `eg_rawEnergy`: Raw energy
+    
+    ***NOTE***: These input features are hardcoded inside the CMSSW ( [here](https://github.com/cms-sw/cmssw/blob/6d2f66057131baacc2fcbdd203588c41c885b42c/RecoEcal/EgammaClusterAlgos/src/SCEnergyCorrectorSemiParm.cc#L315-L333)). So, if one update the input features, then the same information should be propagated to the CMSSW for correct evaluation.
 
 - Output
     1. invTar: Invarse target, i.e. `(Raw Energy) / (True Energy)`
