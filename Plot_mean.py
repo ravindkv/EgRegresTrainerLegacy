@@ -1,5 +1,6 @@
 from numbers import Integral
 import ROOT
+import argparse
 ROOT.gROOT.SetBatch(True)
 ROOT.gStyle.SetOptStat(1111)
 
@@ -7,9 +8,13 @@ var1 = "eg_rawEnergy/eg_gen_energy"
 var2 = "eg_energy/eg_gen_energy"
 var3 = "eg_energy/eg_gen_energy" # should be read using old corr root file
 
-# 14 March 2022
-InputFile = "/eos/cms/store/group/phys_egamma/Run3Studies/SCRegression/WithCorrEnergy_v3_1Start.root"
-InputFile_UnCorr = "/eos/cms/store/group/phys_egamma/Run3Studies/SCRegression/REAL_ext1.root"
+parser = argparse.ArgumentParser(description='plot the output of SC regression trainings')
+parser.add_argument('--input_dir','-i',default='/eos/cms/store/group/phys_egamma/ec/rverma/egammaRegChain/s5Reg/DoublePhoton_Pt-5To300_gun',help='input directory with the ntuples')
+args = parser.parse_args()
+
+
+InputFile = "%s/Run3HLT_IdealIC_IdealTraining_stdVar_stdCuts_ntrees1500_applied.root"%args.input_dir
+InputFile_UnCorr = "%s/Run3HLT_RealIC_RealTraining_stdVar_stdCuts_ntrees1500_applied.root"%args.input_dir
 Tree1 = "egHLTRun3Tree"
 Tree_Uncorr = "egHLTRun3Tree"
 
@@ -23,7 +28,8 @@ c1 = ROOT.TCanvas()
 # c1.SetLogy(1)
 
 # suffix = "EndCap"; suffix_symbol = ">"
-suffix = "Barrel_Ext"; suffix_symbol = "<"
+#suffix = "Barrel_Ext"; suffix_symbol = "<"
+suffix = "Applied_Ext"; suffix_symbol = "<"
 
 # nBins = 51; minX = 0.5; maxX = 1.5;       pt_low = 3;  pt_high = 10; etaCutVal = 3.0; etaCut = "abs(eg_gen_eta)  "+suffix_symbol+" "+str(etaCutVal);
 # nBins = 51; minX = 0.1; maxX = 1.7;       pt_low = 3;  pt_high = 10; etaCutVal = 3.0; etaCut = "abs(eg_gen_eta)  "+suffix_symbol+" "+str(etaCutVal);
@@ -106,4 +112,5 @@ l.SetTextSize(0.050)
 l.DrawLatexNDC(0.15, 0.5, str(pt_low) +" < p_{T}^{gen} < " + str(pt_high))
 l.DrawLatexNDC(0.15, 0.4,"| #eta^{gen} | " + suffix_symbol + str(etaCutVal))
 
-c1.SaveAs("mean_invTar_"+str(pt_low)+"_"+str(pt_high)+"_"+str(etaCutVal).replace(".","p")+"_"+suffix+".png")
+out = "mean_invTar_"+str(pt_low)+"_"+str(pt_high)+"_"+str(etaCutVal).replace(".","p")+"_"+suffix+".png"
+c1.SaveAs("%s/%s"%(args.input_dir, out))
