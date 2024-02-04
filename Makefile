@@ -109,10 +109,11 @@ CMSSWFLAGS    = -I$(CMSSW_BASE)/src -I$(CMSSW_RELEASE_BASE)/src
 CMSSWLIBS     = -L${CMSSW_BASE}/lib/${SCRAM_ARCH} -L${CMSSW_RELEASE_BASE}/lib/${SCRAM_ARCH} -lCondFormatsEgammaObjects
 
 #we dont know exactly where the boost directory is for CMSSW, we just pick the
-#the first one in the directory, dont think this will matter
-BOOST_DIR     = $(shell ls $$CMSSW_DATA_PATH/../external/boost/* -d  | head -n 1)
+#the last one in the directory, dont think this will matter
+BOOST_DIR     = $(shell ls $$CMSSW_DATA_PATH/../external/boost/* -d  | tail -n 1)
 
-CXXFLAGS     += $(ROOTCFLAGS) -I$(INCLUDE_DIR) $(CMSSWFLAGS)  -fexceptions  -I$(BOOST_DIR)/include -I/cvmfs/cms.cern.ch/${SCRAM_ARCH}/cms/vdt/0.4.0-cms/include/
+CXXFLAGS     += $(ROOTCFLAGS) -I$(INCLUDE_DIR) $(CMSSWFLAGS)  -fexceptions  -I$(BOOST_DIR)/include -I/cvmfs/cms.cern.ch/${SCRAM_ARCH}/cms/vdt/0.4.3-7f0e798709b0c2350f0dab5c6fffd8dc/include/
+#CXXFLAGS     += $(ROOTCFLAGS) -I$(INCLUDE_DIR) $(CMSSWFLAGS)  -fexceptions  -I$(BOOST_DIR)/include -I/cvmfs/cms.cern.ch/${SCRAM_ARCH}/cms/vdt/0.4.0-cms/include/
 
 
 
